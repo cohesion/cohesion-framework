@@ -1,0 +1,57 @@
+{
+    "template": {
+        "engine": "CohesionMo",
+        "directory": "templates",
+        "extention": "html"
+    },
+    "assets": {
+        "root": "assets",
+        "javascript_root": "assets/js",
+        "images_root": "assets/images",
+        "style_root": "assets/style"
+    },
+    "autoloader": {
+        "cache_key": "autoloader_cache"
+    },
+    "production": false,
+    "database": {
+        "driver": "mysql",
+        "host": "localhost",
+        "user": "root",
+        "password": "",
+        "database": "cohesion",
+        "slave": {
+            "hosts": [
+                "localhost"
+            ]
+        }
+    },
+    "cache": {
+        "apc": true,
+        "default": "apc"
+    },
+    "cdn": {
+        "hosts": [
+            "//localhost:8080"
+        ],
+        "version": {
+            "cache_prefix": "asset_version_",
+            "ttl": 300
+        }
+    },
+    "routing": {
+        "class": {
+            "default": "Home",
+            "prefix": "",
+            "suffix": "Controller"
+        },
+        "function": {
+            "default": "index",
+            "prefix": "",
+            "suffix": ""
+        },
+        "routes": {
+        }
+    }
+}
+

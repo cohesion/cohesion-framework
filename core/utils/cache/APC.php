@@ -2,9 +2,7 @@
 /**
  * APC wrapper
  */
-class APC {
-    public function APC() {
-    }
+class APC extends Cache {
 
     public function load($key) {
         $success;
@@ -25,5 +23,5 @@ class APC {
     }
 }
 
-class APCException extends Exception {}
+class APCException extends CacheException {}
 
