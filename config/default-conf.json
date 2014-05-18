@@ -1,8 +1,12 @@
 {
+    "domain_name": "www.example.com",
     "template": {
         "engine": "CohesionMo",
         "directory": "templates",
-        "extention": "html"
+        "extention": "html",
+        "layout_template": "index",
+        "title": "Cohesion",
+        "site_name": "Cohesion"
     },
     "assets": {
         "root": "assets",
