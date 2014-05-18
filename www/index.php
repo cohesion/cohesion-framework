@@ -24,22 +24,28 @@ try {
     throw new Exception(null, null, $e);
 }
 
-$class = $route->getClassName();
-$function = $route->getFunctionName();
-$param = $route->getParameterValue();
+if ($redirect = $route->getRedirect()) {
+    header('Location: ' . $redirect, true, 301);
+    exit();
+} else {
+    $class = $route->getClassName();
+    $function = $route->getFunctionName();
+    $param = $route->getParameterValue();
 
-try {
-    $controller = new $class($env);
-    if ($param) {
-        $controller->$function($param);
-    } else {
-        $controller->$function();
+    try {
+        $controller = new $class($env);
+        if ($param) {
+            $output = $controller->$function($param);
+        } else {
+            $output = $controller->$function();
+        }
+        echo $output;
+    } catch (UserSafeException $e) {
+        // TODO: return 500
+        throw new Exception(null, null, $e);
+    } catch (Exception $e) {
+        // TODO: return 500
+        throw new Exception(null, null, $e);
     }
-} catch (UserSafeException $e) {
-    // TODO: return 500
-    throw new Exception(null, null, $e);
-} catch (Exception $e) {
-    // TODO: return 500
-    throw new Exception(null, null, $e);
 }
 

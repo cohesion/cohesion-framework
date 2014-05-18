@@ -50,6 +50,9 @@
             "prefix": "",
             "suffix": ""
         },
+        "redirects": {
+            "^/favicon.ico$": "/assets/images/favicon.ico"
+        },
         "routes": {
         }
     }

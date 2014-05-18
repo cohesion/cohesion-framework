@@ -5,6 +5,7 @@ class Route {
     protected $uri;
     protected $config;
 
+    protected $redirect;
     protected $className;
     protected $functionName;
     protected $param;
@@ -12,10 +13,16 @@ class Route {
     public function Route($uri, $config) {
         $this->uri = $uri;
         $this->config = $config;
-        $components = explode('/', ltrim(preg_replace('/\/+/', '/', $uri), '/'), 3);
+        if (!$redirect = $this->getRedirect()) {
+            $this->setByDefaultRoute();
+        }
+    }
+
+    protected function setByDefaultRoute() {
+        $components = explode('/', ltrim(preg_replace('/\/+/', '/', $this->uri), '/'), 3);
         $numComponents = count($components);
         if (strlen($components[0]) == 0) {
-            $className = $this->constructClassName($config->get('class.default'));
+            $className = $this->constructClassName($this->config->get('class.default'));
         } else {
             $className = $this->constructClassName($components[0]);
         }
@@ -27,12 +34,12 @@ class Route {
             $functionName = $this->constructFunctionName($components[1]);
             if ($numComponents == 2) {
                 if (!method_exists($className, $functionName)) {
-                    $functionName = $this->constructFunctionName($config->get('function.default'));
+                    $functionName = $this->constructFunctionName($this->config->get('function.default'));
                     $param = $components[1];
                 }
             }
         } else {
-            $functionName = $this->constructFunctionName($config->get('function.default'));
+            $functionName = $this->constructFunctionName($this->config->get('function.default'));
         }
         if (!method_exists($className, $functionName)) {
             throw new RouteException("Function $functionName does not exist within class $className");
@@ -53,6 +60,19 @@ class Route {
         $this->className = $className;
         $this->functionName = $functionName;
         $this->param = $param;
+    }
+
+    public function getRedirect() {
+        if (!isset($this->redirect)) {
+            $redirects = $this->config->get('redirects');
+            foreach ($redirects as $regex => $location) {
+                if (preg_match("!$regex!", $this->uri)) {
+                    $this->redirect = $location;
+                    return $location;
+                }
+            }
+        }
+        return $this->redirect;
     }
 
     public function getClassName() {
