@@ -20,8 +20,9 @@ $env = new HTTPEnvironment();
 try {
     $route = new Route($env->uri(), $env->getConfig('routing'));
 } catch (RouteException $e) {
-    // TODO: return 404
-    throw new Exception(null, null, $e);
+    $view = new NotFoundView($env->getConfig('template'), $env->uri());
+    echo $view->generateView();
+    exit();
 }
 
 if ($redirect = $route->getRedirect()) {
@@ -41,11 +42,11 @@ if ($redirect = $route->getRedirect()) {
         }
         echo $output;
     } catch (UserSafeException $e) {
-        // TODO: return 500
-        throw new Exception(null, null, $e);
+        $view = new ServerErrorView($env->getConfig('template'), $e->getMessage());
+        echo $view->generateView();
     } catch (Exception $e) {
-        // TODO: return 500
-        throw new Exception(null, null, $e);
+        $view = new ServerErrorView($env->getConfig('template'));
+        echo $view->generateView();
     }
 }
 
