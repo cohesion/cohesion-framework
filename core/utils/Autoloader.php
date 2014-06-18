@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Autoloader is a class scanner with caching. i.e. it'll try and discover class files in the
  * given list of directories, and if it finds matche(s) it'll save them in a cache for later use (E.g. APC via Zend_Cache)
