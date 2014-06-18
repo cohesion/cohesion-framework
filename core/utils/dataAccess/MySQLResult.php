@@ -1,13 +1,13 @@
-<?
+<?php
 
 /**
  * Wrapper class for a mysql result
  *
- * This must be constructed straight after the result was retrieved from the 
+ * This must be constructed straight after the result was retrieved from the
  * database as the information gathered from the link may be reset otherwise.
  */
 
-class MySQLResult {
+class MySQLResult implements DatabaseResult {
     private $numRows;
     private $numCols;
     private $insertId;
@@ -18,21 +18,18 @@ class MySQLResult {
 
     public function MySQLResult($link, $result, $sql) {
         $this->query = $sql;
-        $this->insertId = mysql_insert_id($link);
-        if (!$this->insertId) {
-            $this->insertId = null;
-        }
-        $this->affectedRows = mysql_affected_rows($link);
-        if ($result !== true) {
-            $this->numCols = mysql_num_fields($result);
-            $this->numRows = mysql_num_rows($result);
-            if ($this->numRows == $this->affectedRows) {
-                $this->affectedRows = false;
-            }
-            $this->rows = array();
-            while ($tmp = mysql_fetch_assoc($result)) {
+        $this->insertId = $link->insert_id;
+        $this->numCols = $link->field_count;
+        $this->rows = array();
+        if ($result && $result !== true) {
+            while ($tmp = $result->fetch_assoc()) {
                 $this->rows[] = $tmp;
             }
+        }
+        $this->numRows = count($this->rows);
+        $this->affectedRows = $link->affected_rows;
+        if ($this->numRows == $this->affectedRows) {
+            $this->affectedRows = null;
         }
         $this->i = 0;
     }

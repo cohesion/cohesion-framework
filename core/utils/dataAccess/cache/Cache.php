@@ -3,7 +3,9 @@
  * Abstract Cache class
  */
 abstract class Cache {
-    public function Cache() {
+    protected $config;
+    public function Cache(Config $config) {
+        $this->config = $config;
     }
 
     public abstract function load($key);
@@ -14,4 +16,3 @@ abstract class Cache {
 }
 
 class CacheException extends Exception {}
-

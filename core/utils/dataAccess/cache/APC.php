@@ -4,6 +4,9 @@
  */
 class APC extends Cache {
 
+    public function APC() {
+    }
+
     public function load($key) {
         $success;
         $value = apc_fetch($key, $success);
