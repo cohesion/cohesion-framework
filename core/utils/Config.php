@@ -1,4 +1,4 @@
-<?
+<?php
 
 class Config {
 
@@ -18,7 +18,7 @@ class Config {
         }
         $values = $this->cache->load($cacheKey);
         if ($values) {
-            $this->loadFromArray($values, $key);
+            $this->load($values, $key);
             return true;
         } else {
             return false;
@@ -28,17 +28,20 @@ class Config {
     public function loadFromFile($file, $key = null) {
         if (preg_match('/\.json$/', $file)) {
             $contents = file_get_contents($file);
-            $params = json_decode($contents, true);
+            $params = json_decode($this->json_minify($contents), true);
             if (!$params) {
                 throw new InvalidArgumentException('Invlid config file format. ' . $file . ' cannot be decoded as JSON');
             }
-            $this->loadFromArray($params, $key);
+            $this->load($params, $key);
         } else {
             throw new InvalidArgumentException('Invalid config file format');
         }
     }
 
-    public function loadFromArray($data, $key = null) {
+    /**
+     * Load from array
+     */
+    public function load($data, $key = null) {
         if ($key) {
             if (isset($this->data[$key])) {
                 $this->data[$key] = self::array_merge_recursive_unique($this->data[$key], $data);
@@ -46,13 +49,15 @@ class Config {
                 $this->data[$key] = $data;
             }
         } else {
-            $this->data = self::array_merge_recursive_unique($this->data, $data);
+            if (is_array($data)) {
+                $this->data = self::array_merge_recursive_unique($this->data, $data);
+            }
         }
     }
 
     /**
      * Add a new key value pairing.
-     * 
+     *
      * @throws InvalidArgumentException if the key is already set
      */
     public function add($key, $value) {
@@ -71,14 +76,9 @@ class Config {
 
     /**
      * Add a key value pairing, merging the value with any existing data for the key
-     *
-     * @throws InvalidArgumentException if value is not an array
      */
-    public function merge($key, $value) {
-        if (!is_array($value)) {
-            throw new InvalidArgumentException(__FUNCTION__." expects value to be an array");
-        }
-        $this->loadFromArray($value, $key);
+    public function merge($key, array $value) {
+        $this->load($value, $key);
     }
 
     public function saveToCache($cacheKey) {
@@ -119,8 +119,12 @@ class Config {
     public function getConfig($name) {
         $data = $this->get($name);
         $config = new self();
-        $config->loadFromArray($data);
+        $config->load($data);
         return $config;
+    }
+
+    protected static function isAssociativeArray($arr) {
+        return is_array($arr) && array_keys($arr) !== range(0, count($arr) - 1);
     }
 
     protected static function array_merge_recursive_unique() {
@@ -140,7 +144,7 @@ class Config {
                 continue;
             foreach ($array as $key => $value)
                 if (is_string($key))
-                    if (is_array($value) && array_key_exists($key, $merged) && is_array($merged[$key]))
+                    if (is_array($value) && array_key_exists($key, $merged) && is_array($merged[$key]) && self::isAssociativeArray($merged[$key]))
                         $merged[$key] = self::array_merge_recursive_unique($merged[$key], $value);
                     else
                         $merged[$key] = $value;
@@ -149,5 +153,57 @@ class Config {
         }
         return $merged;
     }
-}
 
+    /*! JSON.minify()
+        v0.1 (c) Kyle Simpson
+        MIT License
+    */
+    protected function json_minify($json) {
+        $tokenizer = "/\"|(\/\*)|(\*\/)|(\/\/)|\n|\r/";
+        $in_string = false;
+        $in_multiline_comment = false;
+        $in_singleline_comment = false;
+        $tmp; $tmp2; $new_str = array(); $ns = 0; $from = 0; $lc; $rc; $lastIndex = 0;
+
+        while (preg_match($tokenizer,$json,$tmp,PREG_OFFSET_CAPTURE,$lastIndex)) {
+            $tmp = $tmp[0];
+            $lastIndex = $tmp[1] + strlen($tmp[0]);
+            $lc = substr($json,0,$lastIndex - strlen($tmp[0]));
+            $rc = substr($json,$lastIndex);
+            if (!$in_multiline_comment && !$in_singleline_comment) {
+                $tmp2 = substr($lc,$from);
+                if (!$in_string) {
+                    $tmp2 = preg_replace("/(\n|\r|\s)*/","",$tmp2);
+                }
+                $new_str[] = $tmp2;
+            }
+            $from = $lastIndex;
+
+            if ($tmp[0] == "\"" && !$in_multiline_comment && !$in_singleline_comment) {
+                preg_match("/(\\\\)*$/",$lc,$tmp2);
+                if (!$in_string || !$tmp2 || (strlen($tmp2[0]) % 2) == 0) { // start of string with ", or unescaped " character found to end string
+                    $in_string = !$in_string;
+                }
+                $from--; // include " character in next catch
+                $rc = substr($json,$from);
+            }
+            else if ($tmp[0] == "/*" && !$in_string && !$in_multiline_comment && !$in_singleline_comment) {
+                $in_multiline_comment = true;
+            }
+            else if ($tmp[0] == "*/" && !$in_string && $in_multiline_comment && !$in_singleline_comment) {
+                $in_multiline_comment = false;
+            }
+            else if ($tmp[0] == "//" && !$in_string && !$in_multiline_comment && !$in_singleline_comment) {
+                $in_singleline_comment = true;
+            }
+            else if (($tmp[0] == "\n" || $tmp[0] == "\r") && !$in_string && !$in_multiline_comment && $in_singleline_comment) {
+                $in_singleline_comment = false;
+            }
+            else if (!$in_multiline_comment && !$in_singleline_comment && !(preg_match("/\n|\r|\s/",$tmp[0]))) {
+                $new_str[] = $tmp[0];
+            }
+        }
+        $new_str[] = $rc;
+        return implode("",$new_str);
+    }
+}

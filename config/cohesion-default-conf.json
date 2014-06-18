@@ -1,4 +1,25 @@
+/**
+ * Cohesion Default Configuration
+ *
+ * These are the default settings that come with cohesion.
+ *
+ * You shouldn't change this file directly as to avoid conflicts when updating
+ * Cohesion. Instead all changes should go into the default-conf.json file
+ * which will be used to overwrite any of these values.
+ *
+ * default-conf.json should contain all your application settings that are
+ * common across all your environments (development, staging, production, etc).
+ * Then separate configurations can be created for each environment and will be
+ * used based on your APPLICATION_ENV environment setting.
+ *
+ * All settings here are required unless explicitly stated as 'optional'
+ */
 {
+    /**
+     * Global configurations are settings that may effect multiple areas of
+     * the code. Global should only be used as a last resort if the
+     * configuration doesn't fit in better in any of the other settings sections
+     */
     "global": {
         "domain_name": "www.example.com",
         "production": false,
@@ -6,6 +27,11 @@
             "cache_key": "autoloader_cache"
         }
     },
+
+    /**
+     * The application configuration section is what will be passed to your
+     * business logic classes and should contain your business rule settings
+     */
     "application": {
         "class": {
             "default": null,
@@ -13,6 +39,36 @@
             "suffix": "Handler"
         }
     },
+
+    /**
+     * The routing configuration section is used to decided how to deal with
+     * incoming requests and decide which controller should be used to handle
+     * it.
+     *
+     * We currently don't provide a way to specify specific routes and how they
+     * will be handled. Rather Cohesion works on a simple yet effective default
+     * route system.
+     *
+     * It will look for the first path segment that is a valid Controller then
+     * check if the following path segment is a function of that Controller, if
+     * it is then it will call that function with all the following path
+     * segments as parameters to that function, if it's not a valid function
+     * then all segments after the controller will be considered parameters to
+     * the Controller's index function.
+     *
+     * Given the path /nothing/something/action/param1/param2?foo=bar
+     * "nothing" is not a controller and will be ignored.
+     * "something" matches the controller SomethingController (based on the
+     * class prefix and suffix) and therefore that controller will be used.
+     * "action" is a function of SomethingController therefore the resulting
+     * call based on a request to that URI will be:
+     * `SomethingController->action('param1', 'param2')`
+     * To access the GET and POST parameters you can to use
+     * $this->input->get('foo');
+     *
+     * For the home page (route '/') the default controller will be used with
+     * the default function.
+     */
     "routing": {
         "class": {
             "default": "Home",
@@ -24,41 +80,143 @@
             "prefix": "",
             "suffix": ""
         },
+        /**
+         * Redirects can be used to send a redirect. Each of the keys within
+         * the redirects configuration are used as regular expressions to be
+         * used to match the path. If the regex matches the page will be
+         * redirected to the value here.
+         */
         "redirects": {
             "^/favicon.ico$": "/assets/images/favicon.ico"
         }
     },
+
+    /**
+     * The view configuration section defines how the views will be generated.
+     */
     "view": {
+        /**
+         * The default templating engine is CohesionMo which is basically an
+         * extended version of Mustache with a couple of added functionalities
+         * but can be overwritten.
+         * The engine must implement the TemplateEngine interface so if you
+         * want to use a different currently unsupported template engine you
+         * can wrap it in a new class that implements the interface.
+         */
         "engine": "CohesionMo",
-        "directory": "templates",
-        "extention": "html",
-        "default_layout_template": "index",
-        "email_layout_template": "email/index",
+        "directory": "templates", // Root template directory
+        "extention": "html", // Template extension
+        "default_layout_template": "index", // Root default template
+        "email_layout_template": "email/index", // Default template to be used in emails
+        /**
+         * template_vars is a set of default variables to be available in every
+         * template.
+         */
         "template_vars": {
             "title": "Cohesion",
-            "site_name": "Cohesion"
+            "site_name": "Cohesion",
+            "asset_path": {
+                "root": "/assets",
+                "javascript": "/assets/js/",
+                "images": "/assets/images/",
+                "style": "/assets/style/" // CSS
+            }
         },
+        /**
+         * Used to define the class names so that the ViewFactory can create
+         * the views based on just the base name. Eg, 'home' will create a
+         * HomeView instance.
+         */
         "class": {
             "default": "",
             "prefix": "",
             "suffix": "View"
         },
-        "assets": {
-            "root": "assets",
-            "javascript_root": "assets/js",
-            "images_root": "assets/images",
-            "style_root": "assets/style"
-        },
+        /**
+         * CDN is OPTIONAL
+         * Using Content Delivery Network will usually increase the speed of
+         * viewing your site as well as drastically reducing server load as
+         * all your static assets will be cached on a third party server that
+         * usually have end points all around the globe.
+         */
         "cdn": {
+            /**
+             * hosts is an array of FQDNs to use. It's recommended that you use
+             * multiple CDN domains as nearly all browsers have a limit of
+             * concurrent connections to the same domain. Adding multiple CDN
+             * hosts will allow clients to download more assets concurrently.
+             */
             "hosts": [
-                "//localhost:8080"
+                "//localhost"
             ],
+            /**
+             * Versioning is used to invalidate assets when they change.
+             * Because the CDN will cache your static assets they will need
+             * a new resource name every time you update your files, such as
+             * updates to JavaScript files etc.
+             *
+             * It's important that if your CDN asks you whether or not to
+             * include the query string you include it.
+             *
+             * File versions are basically just an MD5 check sum of the file.
+             * To improve performance the version is stored in the local cache
+             * and is only re-evaluated after the ttl has expired
+             */
             "version": {
                 "cache_prefix": "asset_version_",
-                "ttl": 300
+                "ttl": 300 // Time to live in seconds
+            }
+        },
+        /**
+         * These are the accepted formats and the view class that matches them
+         * If you want to use your own default view for HTML you should
+         * overwrite it in your configuration. Eg, the format 'plain' will use
+         * the PlainView by default.
+         */
+        "formats": {
+            "plain": {
+                "class": "Plain"
+            },
+            "html": {
+                "class": "Template"
+            },
+            "json": {
+                "class": "JSON"
+            },
+            "xml": {
+                "class": "XML"
+            }
+        },
+        /**
+         * Mappings of various mime types to the format.
+         * You probably shouldn't overwrite these but you can extend this if
+         * want to implement other formats.
+         */
+        "mime_types": {
+            "text/plain": {
+                "format": "plain"
+            },
+            "text/html": {
+                "format": "html"
+            },
+            "application/json": {
+                "format": "json"
+            },
+            "application/xml": {
+                "format": "xml"
             }
         }
     },
+
+    /**
+     * The data_access configuration section contains each of the data access
+     * types that your application will use.
+     * The key should match a data access interface or class. If a driver is
+     * specified it will use that class otherwise it will try to use the
+     * setting value.
+     * `public SomethingDAO(Database $db)` will use the database setting and
+     * instantiate the driver (MySQL).
+     */
     "data_access": {
         "class": {
             "default": null,
@@ -72,7 +230,20 @@
             "user": "root",
             "password": "",
             "database": "cohesion",
+            /**
+             * slave is OPTIONAL
+             * The slave is used in a master-slave database setup.
+             * You can override the user, password and database settings here
+             * if you want to use different ones for the slaves, otherwise it
+             * will use the same ones.
+             */
             "slave": {
+                /**
+                 * The hosts is set as an array to be able to take multiple
+                 * slaves.
+                 * The slave that will be used will be selected at random each
+                 * runtime but the same one will be used throughout a process.
+                 */
                 "hosts": [
                     "localhost"
                 ]
@@ -82,12 +253,17 @@
             "driver": "APC"
         }
     },
+
+    /**
+     * The object configuration section sets up the basic objects. There
+     * shouldn't really be any reason to add anything extra in here as objects
+     * are just dumb classes that store data.
+     */
     "object": {
         "class": {
             "default": null,
             "prefix": "",
-            "suffix": "DTO"
+            "suffix": ""
         }
     }
 }
-
