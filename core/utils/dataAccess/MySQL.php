@@ -103,7 +103,7 @@ class MySQL implements Database {
         if (!$link) {
             throw new MySQLConnectionException("Unable to connect to $host");
         }
-        $this->queryLink($link, 'SET NAMES {{charset}}', array('charset' => $charset));
+        $link->set_charset($charset);
         return $link;
     }
 
