@@ -1,4 +1,4 @@
-<?
+<?php
 
 class Route {
 
@@ -8,58 +8,66 @@ class Route {
     protected $redirect;
     protected $className;
     protected $functionName;
-    protected $param;
+    protected $params;
 
     public function Route($uri, $config) {
         $this->uri = $uri;
         $this->config = $config;
         if (!$redirect = $this->getRedirect()) {
-            $this->setByDefaultRoute();
+            try {
+                $this->setByDefaultRoute();
+            } catch (RouteException $e) {
+                // No need to do anything. Should always be checking if the className is set
+            }
         }
     }
 
     protected function setByDefaultRoute() {
-        $components = explode('/', ltrim(preg_replace('/\/+/', '/', $this->uri), '/'), 3);
-        $numComponents = count($components);
-        if (strlen($components[0]) == 0) {
-            $className = $this->constructClassName($this->config->get('class.default'));
-        } else {
-            $className = $this->constructClassName($components[0]);
-        }
-        if (!class_exists($className)) {
-            throw new RouteException("Class $className does not exist");
-        }
-        $param = null;
-        if ($numComponents > 1) {
-            $functionName = $this->constructFunctionName($components[1]);
-            if ($numComponents == 2) {
-                if (!method_exists($className, $functionName)) {
+        $components = explode('/', ltrim(preg_replace('/\/+/', '/', $this->uri), '/'));
+        $defaultClassName = $this->constructClassName($this->config->get('class.default'));
+        $className = $defaultClassName;
+        $functionName = null;
+        $params = array();
+        foreach ($components as $component) {
+            if (!$functionName) {
+                if ($className == $defaultClassName && $component) {
+                    $checkClassName = $this->constructClassName($component);
+                    if (class_exists($checkClassName)) {
+                        $className = $checkClassName;
+                        continue;
+                    }
+                }
+                $checkFunctionName = $this->constructFunctionName($component);
+                if (method_exists($className, $checkFunctionName)) {
+                    $functionName = $checkFunctionName;
+                } else if ($className != $defaultClassName) {
                     $functionName = $this->constructFunctionName($this->config->get('function.default'));
-                    $param = $components[1];
+                    $params[] = $component;
+                }
+            } else {
+                $params[] = $component;
+            }
+        }
+        if (!$functionName) {
+            $functionName = $this->constructFunctionName($this->config->get('function.default'));
+            if ($className == $defaultClassName) {
+                if ($components[0] != '') {
+                    $params = $components;
                 }
             }
-        } else {
-            $functionName = $this->constructFunctionName($this->config->get('function.default'));
-        }
-        if (!method_exists($className, $functionName)) {
-            throw new RouteException("Function $functionName does not exist within class $className");
-        }
-        if ($numComponents > 2) {
-            $param = $components[2];
         }
         $reflection = new ReflectionMethod($className, $functionName);
-        $functionParameters = $reflection->getParameters();
-        if ($functionParameters) {
-            if (!$param && !$functionParameters[0]->isOptional()) {
-                throw new RouteException("Function $functionName requires a parameter");
-            }
-        } else if ($param) {
-            throw new RouteException("Function $functionName does not take any parameters");
+        $minParams = $reflection->getNumberOfRequiredParameters();
+        $maxParams = $reflection->getNumberOfParameters();
+        if (count($params) < $minParams) {
+            throw new RouteException("$className->$functionName requires at least $minParams parameters");
+        } else if (count($params) > $maxParams) {
+            throw new RouteException("$className->$functionName only accepts up to $maxParams parameters");
         }
 
         $this->className = $className;
         $this->functionName = $functionName;
-        $this->param = $param;
+        $this->params = $params;
     }
 
     public function getRedirect() {
@@ -75,6 +83,10 @@ class Route {
         return $this->redirect;
     }
 
+    public function getUri() {
+        return $this->uri;
+    }
+
     public function getClassName() {
         return $this->className;
     }
@@ -83,12 +95,12 @@ class Route {
         return $this->functionName;
     }
 
-    public function getParameterValue() {
-        return $this->param;
+    public function getParameterValues() {
+        return $this->params;
     }
 
     protected function constructClassName($name) {
-        return $this->config->get('class.prefix') . ucwords($name) . $this->config->get('class.suffix');
+        return $this->config->get('class.prefix') . preg_replace('/-/', '', ucwords($name)) . $this->config->get('class.suffix');
     }
 
     protected function constructFunctionName($name) {
