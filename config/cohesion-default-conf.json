@@ -1,0 +1,93 @@
+{
+    "global": {
+        "domain_name": "www.example.com",
+        "production": false,
+        "autoloader": {
+            "cache_key": "autoloader_cache"
+        }
+    },
+    "application": {
+        "class": {
+            "default": null,
+            "prefix": "",
+            "suffix": "Handler"
+        }
+    },
+    "routing": {
+        "class": {
+            "default": "Home",
+            "prefix": "",
+            "suffix": "Controller"
+        },
+        "function": {
+            "default": "index",
+            "prefix": "",
+            "suffix": ""
+        },
+        "redirects": {
+            "^/favicon.ico$": "/assets/images/favicon.ico"
+        }
+    },
+    "view": {
+        "engine": "CohesionMo",
+        "directory": "templates",
+        "extention": "html",
+        "default_layout_template": "index",
+        "email_layout_template": "email/index",
+        "template_vars": {
+            "title": "Cohesion",
+            "site_name": "Cohesion"
+        },
+        "class": {
+            "default": "",
+            "prefix": "",
+            "suffix": "View"
+        },
+        "assets": {
+            "root": "assets",
+            "javascript_root": "assets/js",
+            "images_root": "assets/images",
+            "style_root": "assets/style"
+        },
+        "cdn": {
+            "hosts": [
+                "//localhost:8080"
+            ],
+            "version": {
+                "cache_prefix": "asset_version_",
+                "ttl": 300
+            }
+        }
+    },
+    "data_access": {
+        "class": {
+            "default": null,
+            "prefix": "",
+            "suffix": "DAO"
+        },
+        "database": {
+            "driver": "MySQL",
+            "host": "localhost",
+            "port": 3306,
+            "user": "root",
+            "password": "",
+            "database": "cohesion",
+            "slave": {
+                "hosts": [
+                    "localhost"
+                ]
+            }
+        },
+        "cache": {
+            "driver": "APC"
+        }
+    },
+    "object": {
+        "class": {
+            "default": null,
+            "prefix": "",
+            "suffix": "DTO"
+        }
+    }
+}
+
