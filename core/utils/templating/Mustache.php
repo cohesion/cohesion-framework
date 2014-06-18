@@ -60,7 +60,7 @@ class Mustache {
 	 * Constants used for section and tag RegEx
 	 */
 	const SECTION_TYPES = '\^#\/';
-	const TAG_TYPES = '#\^\/=!<>\\{&';
+	const TAG_TYPES = '#\^\/=!>\\{&';
 
 	protected $_otag = '{{';
 	protected $_ctag = '}}';
@@ -552,7 +552,7 @@ class Mustache {
 			'/(?P<leading>(?:%s\\r?\\n)[ \\t]*)?%s(?P<type>[%s]?)(?P<tag_name>.+?)(?:\\2|})?%s(?P<trailing>\\s*(?:\\r?\\n|\\Z))?/s',
 			($first ? '\\A|' : ''),
 			preg_quote($otag, '/'),
-			self::TAG_TYPES,
+			static::TAG_TYPES,
 			preg_quote($ctag, '/')
 		);
 	}
