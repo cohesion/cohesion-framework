@@ -1,6 +1,8 @@
-<?
+<?php
 
-class DBException extends RuntimeException {}
+class DataAccessException extends RuntimeException {}
+class InvalidClassException extends Exception {}
+class NotFoundException extends RuntimeException {}
 
 // User Safe Exceptions are exceptions where the message is safe to display to the user
 class UserSafeException extends RuntimeException {}

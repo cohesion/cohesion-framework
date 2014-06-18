@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * Data Access Object (DAO)
@@ -11,8 +11,13 @@
 abstract class DAO {
     protected $db;
 
-    public function DAO($db) {
+    /**
+     * DAO constructor
+     * When extending the DAO you can set what data access libraries it will
+     * need to use by adding them as constructor parameters. The DAOFactory
+     * will then use the config to setup the data access library.
+     */
+    public function DAO(Database $db) {
         $this->db = $db;
     }
 }
-

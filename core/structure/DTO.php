@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * Data Transfer Obeject (DTO)
@@ -10,6 +10,11 @@
  */
 abstract class DTO {
     private $reflection;
+
+    const MAX_PHONE_LENGTH = 20;
+    const MIN_PHONE_LENGTH = 6;
+    const MAX_EMAIL_LENGTH = 60;
+    const MAX_URL_LENGTH = 255;
 
     public function DTO($vars) {
         $this->reflection = new ReflectionClass($this);
@@ -45,7 +50,7 @@ abstract class DTO {
     public function setId($id) {
         $className = get_class($this);
         if (!$this->reflection->hasProperty('id')) {
-            throw new BedFunctionCallException("Bad call to setId() on $className which doesn't have an ID field");
+            throw new BadFunctionCallException("Bad call to setId() on $className which doesn't have an ID field");
         }
         if ($this->id && $this->id != $id) {
             throw new InvalidArgumentException("Cannot set $className ID field after it's already been set");
@@ -100,5 +105,132 @@ abstract class DTO {
         $func = create_function('$c', 'return strtoupper($c[1]);');
         return preg_replace_callback('/_([a-z])/', $func, $name);
     }
-}
 
+    protected function validateId($id) {
+        return (is_int($id) || (int)$id == $id) && $id > 0;
+    }
+
+    protected  function validateString($str, &$errors = null, $name = null, $min = null, $max = null) {
+        if (!$min && !$str) {
+            return true;
+        }
+        if (is_array($errors) && !$name) {
+            $name = 'String';
+        }
+        if (is_string($str)) {
+            if (strlen($str) < $min) {
+                if (!is_array($errors)) {
+                    return false;
+                }
+                $errors[] = $name . ' must be at least ' . $min . ' character' . ($min != 1 ? 's' : '');
+            } else if (strlen($str) > $max) {
+                if (!is_array($errors)) {
+                    return false;
+                }
+                $errors[] = $name . ' cannot be longer than ' . $max . ' character' . ($max != 1 ? 's' : '');
+            }
+            return !$errors;
+        } else {
+            if (is_array($errors)) {
+                $errors[] = 'Invalid ' . $name . ' is not a string';
+            }
+            return false;
+        }
+    }
+
+    protected function validatePhone($phone, &$errors = null) {
+        if (strlen($phone) > self::MAX_PHONE_LENGTH) {
+            if (!is_array($errors)) {
+                return false;
+            }
+            $errors[] = 'Phone number must be less than ' . self::MAX_PHONE_LENGTH . ' characters';
+        } else if (strlen($phone) < self::MIN_PHONE_LENGTH) {
+            if (!is_array($errors)) {
+                return false;
+            }
+            $errors[] = 'Phone number must be at least ' . self::MIN_PHONE_LENGTH . ' characters';
+        }
+        if (preg_match('/^(?:\+\d{2,4}\s?)?(?:\(\d{2,4}\)\s?)?[\d -]{5,16}(?:(?:ext|x)\s?\d{1,5})?$/', $phone)) {
+            return !$errors;
+        } else {
+            if (is_array($errors)) {
+                $errors[] = 'Invalid phone number';
+            }
+            return false;
+        }
+    }
+
+    protected function validateEmail($email, &$errors = null) {
+        if (strlen($email) > self::MAX_EMAIL_LENGTH) {
+            if (!is_array($errors)) {
+                return false;
+            }
+            $errors[] = 'Email must be less than ' . self::MAX_EMAIL_LENGTH . ' characters';
+        }
+        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return !$errors;
+        } else {
+            if (is_array($errors)) {
+                $errors[] = 'Invalid email address';
+            }
+            return false;
+        }
+    }
+
+    protected function validateTimestamp($timestamp, &$errors = null) {
+        if (is_int($timestamp) || (int)$timestamp == $timestamp) {
+            return true;
+        } else {
+            if (is_array($errors)) {
+                $errors[] = 'Invalid timestamp: ' . $timestamp;
+            }
+            return false;
+        }
+    }
+
+    protected function validateUrl($url, &$errors = null) {
+        if (!$url) {
+            if (!is_array($errors)) {
+                return false;
+            }
+            $errors[] = 'Empty URL';
+        }
+        if (strlen($url) > self::MAX_URL_LENGTH) {
+            if (!is_array($errors)) {
+                return false;
+            }
+            $errors[] = 'URL must be less than ' . self::MAX_URL_LENGTH . ' characters';
+        }
+        if (filter_var($url, FILTER_VALIDATE_URL)) {
+            return !$errors;
+        } else {
+            if (is_array($errors)) {
+                $errors[] = 'Invalid url';
+            }
+            return false;
+        }
+    }
+
+    protected function validateIp($ip) {
+        return filter_var($ip, FILTER_VALIDATE_IP);
+    }
+
+    protected function validateCoordinates($latitude, $longitude, &$errors = null) {
+        if (is_numeric($latitude) && is_numeric($longitude)) {
+            if ($latitude == 0 && $longitude == 0) {
+                if (is_array($errors)) {
+                    $errors[] = 'Zero coordinates';
+                }
+            } else if ($latitude >= -90 && $latitude <= 90 && $longitude >= -180 && $longitude <= 180) {
+                if (is_array($errors)) {
+                    $errors[] = "Invalid coordinates $latitude, $longitude";
+                }
+            } else {
+                return true;
+            }
+        } else if (is_array($errors)) {
+            $errors[] = "Invalid coordinates";
+        }
+        return false;
+    }
+}
