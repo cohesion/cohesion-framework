@@ -101,11 +101,11 @@ class Environment {
     }
 
     public function getFormat() {
-        return self::DEFAULT_FORMAT;
+        return static::DEFAULT_FORMAT;
     }
 
     public function getFormatClass() {
-        return $this->config->get('view.formats.' . $this->getFormat());
+        return $this->config->get('view.formats.' . $this->getFormat() . '.class');
     }
 
     public function getLanguage() {

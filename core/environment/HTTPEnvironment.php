@@ -45,10 +45,10 @@ class HTTPEnvironment extends Environment {
         if ($accepts) {
             $type = $this->getHighestSupportedValue($accepts, array_keys($this->supportedMimeTypes));
             if ($type) {
-                return $this->supportedMimeTypes[$type];
+                return $this->supportedMimeTypes[$type]['format'];
             }
         }
-        return self::DEFAULT_FORMAT;
+        return static::DEFAULT_FORMAT;
     }
 
     /**
