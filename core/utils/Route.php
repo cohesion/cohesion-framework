@@ -42,7 +42,11 @@ class Route {
                     $functionName = $checkFunctionName;
                 } else if ($className != $defaultClassName) {
                     $functionName = $this->constructFunctionName($this->config->get('function.default'));
-                    $params[] = $component;
+                    if (method_exists($className, $functionName)) {
+                        $params[] = $component;
+                    } else {
+                        throw new RouteException("$className doesn't have an $functionName function");
+                    }
                 }
             } else {
                 $params[] = $component;

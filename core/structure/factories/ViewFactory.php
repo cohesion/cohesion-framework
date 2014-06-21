@@ -5,6 +5,8 @@ class ViewFactory extends AbstractFactory {
     protected static $engine;
     protected static $vars;
 
+    const DEFAULT_DATA_VIEW = 'JSON';
+
     public static function createView($className = null, $template = null) {
         if ($className === null) {
             $className = self::$environment->get('view.class.default');
@@ -77,6 +79,9 @@ class ViewFactory extends AbstractFactory {
         $className = self::$environment->get('view.class.prefix') . $format . self::$environment->get('view.class.suffix');
         if (!class_exists($className)) {
             throw new InvalidViewException("$className doesn't exist");
+        }
+        if (!is_subclass_of($className, 'DataView')) {
+            $className = self::$environment->get('view.class.prefix') . self::DEFAULT_DATA_VIEW . self::$environment->get('view.class.suffix');
         }
         return new $className($data);
     }

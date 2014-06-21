@@ -41,6 +41,10 @@ class HTTPEnvironment extends Environment {
     }
 
     public function getFormat() {
+        $format = $this->input->get('format');
+        if ($format && $this->config->get("view.formats.$format")) {
+            return $format;
+        }
         $accepts = $_SERVER['HTTP_ACCEPT'];
         if ($accepts) {
             $type = $this->getHighestSupportedValue($accepts, array_keys($this->supportedMimeTypes));
