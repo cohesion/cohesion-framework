@@ -17,10 +17,10 @@ class CohesionMo extends Mustache implements TemplateEngine {
             return $this->_renderPartial($this->_getVariable($tag_name), $leading, $trailing);
         };
         $this->_modifiers['-'] = function ($tag_name, $leading, $trailing) {
-            return $this->getSiteUrl($tag_name);
+            return $leading . $this->getSiteUrl($tag_name) . $trailing;
         };
         $this->_modifiers['~'] = function ($tag_name, $leading, $trailing) {
-            return $this->getAssetUrl($tag_name);
+            return $leading . $this->getAssetUrl($tag_name) . $trailing;
         };
     }
 
@@ -46,9 +46,11 @@ class CohesionMo extends Mustache implements TemplateEngine {
             $this->_otag = '{{';
             $this->_ctag = '}}';
         }
+        $this->_tagRegEx = $this->_prepareTagRegEx($this->_otag, $this->_ctag);
         $uri = $this->_renderTemplate($uri);
         $this->_otag = $otag;
         $this->_ctag = $ctag;
+        $this->_tagRegEx = $this->_prepareTagRegEx($this->_otag, $this->_ctag);
         return $this->config->get('base_url') . $uri;
     }
 
