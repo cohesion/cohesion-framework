@@ -1,18 +1,18 @@
 <?php
 
 /**
- * Handlers contain all the business logic about an object but do not contain
+ * Services contain all the business logic about an object but do not contain
  * any data access logic or object data
  *
  * @author Adric Schreuders
  */
-class Handler {
+class Service {
     protected $config;
     protected $dao;
     protected $user;
     protected $admin;
 
-    public function Handler($config, $user = null) {
+    public function Service($config, $user = null) {
         $reflection = new ReflectionClass($this);
         $className = $reflection->getShortName();
         $daoName = preg_replace(array('/^' . $config->get('class.prefix') . '/', '/' . $config->get('class.suffix') . '$/'), '', $className);
