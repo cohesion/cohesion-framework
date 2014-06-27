@@ -107,7 +107,6 @@
         "directory": "templates", // Root template directory
         "extention": "html", // Template extension
         "default_layout_template": "index", // Root default template
-        "email_layout_template": "email/index", // Default template to be used in emails
         /**
          * template_vars is a set of default variables to be available in every
          * template.
@@ -264,6 +263,54 @@
             "default": null,
             "prefix": "",
             "suffix": ""
+        }
+    },
+
+    /**
+     * The utility configuration section provides the config used by the
+     * various utility classes.
+     *
+     * Each of these sections are optional and only required if you want to use
+     * the utility.
+     */
+    "utility": {
+        "class": {
+            "default": null,
+            "prefix": "",
+            "suffix": ""
+        },
+        /**
+         * Email utility for sending system generated emails.
+         * The Email utility uses Views to display the emails therefore all the
+         * template engine and default template variables set in the view
+         * section also apply here.
+         */
+        "email": {
+            "class": {
+                "default": "",
+                "prefix": "",
+                "suffix": "Email"
+            },
+            "default_layout_template": "email/index",
+            /**
+             * The default to use for who the emails are from
+             */
+            "from": {
+                "name": "Admin",
+                "email": "admin@example.com"
+            },
+            /**
+             * The default headers to be sent with the email
+             */
+            "headers": {
+                "MIME-Version": "1.0",
+                "Content-Type": "text/html; charset=UTF-8"
+            },
+            /**
+             * An array of email addresses to BCC in every email sent by the system
+             */
+            "bcc": [
+            ]
         }
     }
 }
