@@ -22,6 +22,7 @@ class TemplateView extends View {
         foreach ($errors as $key => $val) {
             $this->addVar($key . '_error', $val);
         }
+        $this->addVar('errors', $errors);
     }
 
     protected function initialiseVars($vars) {
