@@ -104,13 +104,23 @@ class Route {
     }
 
     protected function constructClassName($name) {
-        return $this->config->get('class.prefix') . preg_replace('/-/', '', ucwords($name)) . $this->config->get('class.suffix');
+        $words = explode('-', $name);
+        $name = '';
+        foreach ($words as $word) {
+            $name .= ucfirst($word);
+        }
+        return $this->config->get('class.prefix') . $name . $this->config->get('class.suffix');
     }
 
     protected function constructFunctionName($name) {
         $prefix = $this->config->get('function.prefix');
-        if ($prefix) {
-            $name = ucwords($name);
+        $words = explode('-', $name);
+        $name = '';
+        if (!$prefix) {
+            $name = ucfirst(array_shift($words));
+        }
+        foreach ($words as $word) {
+            $name .= ucfirst($word);
         }
         return $prefix . $name . $this->config->get('function.suffix');
     }
