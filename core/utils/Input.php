@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Input handler
  *
@@ -12,11 +13,13 @@ class Input {
         $this->vars = $vars;
     }
 
-    public function get($name) {
-        if (isset($this->vars[$name])) {
+    public function get($name = null, $default = null) {
+        if ($name === null) {
+            return $this->vars;
+        } else if (isset($this->vars[$name]) && $this->vars[$name] !== '') {
             return $this->vars[$name];
         } else {
-            return null;
+            return $default;
         }
     }
 
@@ -38,7 +41,7 @@ class Input {
                         return false;
                     }
                 } else {
-                    // Input validation rules
+                    // TODO: Input validation rules
                 }
             }
         }
@@ -48,4 +51,3 @@ class Input {
         return true;
     }
 }
-
