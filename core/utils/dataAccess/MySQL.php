@@ -40,7 +40,7 @@ class MySQL implements Database {
     }
 
     public function query($sql, $binds = false) {
-        if (preg_match('/^\s*(select|explain)/i', $sql)) {
+        if (!$this->inTransaction && preg_match('/^\s*(select|explain)/i', $sql)) {
             return $this->querySlave($sql, $binds);
         } else {
             return $this->queryMaster($sql, $binds);
@@ -173,18 +173,12 @@ class MySQL implements Database {
     }
 
     public function startTransaction() {
-        if (!$this->masterLink) {
-            $this->connectMaster();
-        }
         $this->createSavePoint();
     }
 
     public function rollback() {
         if (!$this->inTransaction) {
             throw new MySQLTransactionException('Not in transaction');
-        }
-        if (!$this->masterLink) {
-            $this->connectMaster();
         }
         $this->rollbackLastSavePoint();
     }
@@ -193,20 +187,17 @@ class MySQL implements Database {
         if (!$this->inTransaction) {
             throw new MySQLTransactionException('Not in transaction');
         }
-        if (!$this->masterLink) {
-            $this->connectMaster();
-        }
         $this->commitLastSavePoint();
     }
 
     private function createSavePoint() {
         if ($this->inTransaction) {
             $savepoint = 'sp' . uniqid();
-            $this->queryLink($this->masterLink, 'SAVEPOINT ' . $savepoint);
+            $this->queryMaster('SAVEPOINT ' . $savepoint);
             $this->savepoints[] = $savepoint;
         } else {
             $this->inTransaction = true;
-            $this->queryLink($this->masterLink, 'START TRANSACTION');
+            $this->queryMaster('START TRANSACTION');
         }
     }
 
@@ -216,9 +207,9 @@ class MySQL implements Database {
         }
         if ($this->savepoints) {
             $savepoint = array_pop($this->savepoints);
-            $this->queryLink($this->masterLink, 'RELEASE SAVEPOINT ' . $savepoint);
+            $this->queryMaster('RELEASE SAVEPOINT ' . $savepoint);
         } else {
-            $this->queryLink($this->masterLink, 'COMMIT');
+            $this->queryMaster('COMMIT');
             $this->inTransaction = false;
         }
     }
@@ -229,9 +220,9 @@ class MySQL implements Database {
         }
         if ($this->savepoints) {
             $savepoint = array_pop($this->savepoints);
-            $this->queryLink($this->masterLink, 'ROLLBACK TO ' . $savepoint);
+            $this->queryMaster('ROLLBACK TO ' . $savepoint);
         } else {
-            $this->queryLink($this->masterLink, 'ROLLBACK');
+            $this->queryMaster('ROLLBACK');
             $this->inTransaction = false;
         }
     }
