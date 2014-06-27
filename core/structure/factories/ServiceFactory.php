@@ -17,9 +17,17 @@ class ServiceFactory extends AbstractFactory {
             throw new InvalidServiceException("$className doesn't exist");
         }
 
-        return new $className(self::$environment->getConfig('application'));
+        $auth = self::$environment->auth();
+        if ($auth) {
+            $user = $auth->getUser();
+        } else {
+            $user = null;
+        }
+        return new $className(
+            self::$environment->getConfig('application'),
+            $user
+        );
     }
 }
 
 class InvalidServiceException extends InvalidClassException {}
-

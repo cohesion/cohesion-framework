@@ -37,8 +37,7 @@ $params = $route->getParameterValues();
 
 // Execute controller
 try {
-    $auth = new HTTPAuth($env->input());
-    $controller = new $class($env->getConfig(), $env->input(), $auth);
+    $controller = new $class($env->getConfig(), $env->input(), $env->auth());
     if ($params) {
         $output = call_user_method_array($function, $controller, $params);
     } else {

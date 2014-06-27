@@ -15,6 +15,9 @@ class HTTPEnvironment extends Environment {
 
         $this->input = new Input(isset($_REQUEST) ? $_REQUEST : array());
 
+        $this->auth = new HTTPAuth($this->input);
+        ServiceFactory::setEnvironment($this);
+
         $global = $this->config->get('global');
         $this->supportedMimeTypes = $this->config->get('view.mime_types');
 

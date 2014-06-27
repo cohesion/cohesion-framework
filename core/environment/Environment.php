@@ -2,17 +2,12 @@
 
 class Environment {
 
+    protected $auth;
     protected $environment;
     protected $production;
     protected $config;
     protected $input;
     protected $cache;
-
-    protected $controllerEnv;
-    protected $viewEnv;
-    protected $dataAccessEnv;
-    protected $appEnv;
-    protected $routeEnv;
 
     const DEFAULT_FORMAT = 'plain';
     const DEFAULT_LANGUAGE = 'en';
@@ -71,7 +66,7 @@ class Environment {
         RoutingFactory::setEnvironment($this);
         // ControllerFactory::setEnvironment($this);
         ViewFactory::setEnvironment($this);
-        // ApplicationFactory::setEnvironment($this);
+        ServiceFactory::setEnvironment($this);
         // ObjectFactory::setEnvironment($this);
         DataAccessFactory::setEnvironment($this);
     }
@@ -94,6 +89,10 @@ class Environment {
 
     public function input() {
         return $this->input;
+    }
+
+    public function auth() {
+        return $this->auth;
     }
 
     public function isProduction() {

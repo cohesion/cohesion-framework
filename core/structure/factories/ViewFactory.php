@@ -47,6 +47,11 @@ class ViewFactory extends AbstractFactory {
         if (!isset(self::$vars)) {
             self::$vars = self::$environment->get('view.template_vars');
         }
+        if (self::$environment->auth()->isLoggedIn()) {
+            self::$vars['is_logged_in'] = true;
+            self::$vars['user'] = self::$environment->auth()->getUser()->getVars();
+        }
+        self::$vars['uri'] = self::$environment->get('global.uri');
         return self::$vars;
     }
 
