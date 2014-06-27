@@ -178,7 +178,7 @@ abstract class DTO {
     }
 
     protected function validateTimestamp($timestamp, &$errors = null) {
-        if (is_int($timestamp) || (int)$timestamp == $timestamp) {
+        if (is_int($timestamp) || (is_numeric($timestamp) && (int)$timestamp == $timestamp)) {
             return true;
         } else {
             if (is_array($errors)) {
@@ -186,6 +186,16 @@ abstract class DTO {
             }
             return false;
         }
+    }
+
+    protected function validateDate($date, &$errors = null) {
+        $date = DateTime::createFromFormat('d/m/Y', $date);
+        if (!$date && is_array($errors)) {
+            $errors[] = 'Invalid date format';
+        } else {
+            return true;
+        }
+        return false;
     }
 
     protected function validateUrl($url, &$errors = null) {
