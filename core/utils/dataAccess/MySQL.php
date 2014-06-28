@@ -151,9 +151,11 @@ class MySQL implements Database {
             if (!$statement = $link->prepare($sqli)) {
                 throw new MySQLStatementException($link->errno . ': ' . $link->error);
             }
-            array_unshift($bindsi, $types);
-            if (!call_user_func_array(array($statement, 'bind_param'), $bindsi)) {
-                throw new MySQLBindException($link->errno . ': ' . $link->error);
+            if ($types) {
+                array_unshift($bindsi, $types);
+                if (!call_user_func_array(array($statement, 'bind_param'), $bindsi)) {
+                    throw new MySQLBindException($link->errno . ': ' . $link->error);
+                }
             }
             if (!$statement->execute()) {
                 throw new MySQLExecuteException($link->errno . ': ' . $link->error);
