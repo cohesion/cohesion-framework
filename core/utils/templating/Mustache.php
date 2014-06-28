@@ -142,6 +142,11 @@ class Mustache {
                 if ($tag_name[(strlen($tag_name) - 1)] == '}') {
                     $tag_name = substr($tag_name, 0, -1);
                 }
+                if ($this->_hasPragma(self::PRAGMA_UNESCAPED)) {
+                    return $this->_renderEscaped($tag_name, $leading, $trailing);
+                } else {
+                    return $this->_renderUnescaped($tag_name, $leading, $trailing);
+                }
             },
             '&' => function ($tag_name, $leading, $trailing) {
                 if ($this->_hasPragma(self::PRAGMA_UNESCAPED)) {
