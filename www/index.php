@@ -7,14 +7,19 @@ define('WEB_ROOT', $_SERVER['DOCUMENT_ROOT'] . '/');
 define('BASE_DIR', WEB_ROOT . '../');
 define('CONFIG_DIR', BASE_DIR . 'config/');
 
+function exceptionErrorHandler($errno, $errstr, $errfile, $errline ) {
+    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+}
+set_error_handler("exceptionErrorHandler");
+
 require_once(BASE_DIR . 'core/structure/exceptions.php');
-require_once(BASE_DIR . 'core/environment/Environment.php');
-require_once(BASE_DIR . 'core/environment/HTTPEnvironment.php');
-require_once(BASE_DIR . 'core/utils/Config.php');
-require_once(BASE_DIR . 'core/utils/dataAccess/cache/Cache.php');
-require_once(BASE_DIR . 'core/utils/dataAccess/cache/APC.php');
+require_once(BASE_DIR . 'core/autoload.php');
 require_once(BASE_DIR . 'core/vendor/autoload.php');
-require_once(BASE_DIR . 'core/utils/Autoloader.php');
+require_once(BASE_DIR . 'core/util/Autoloader.php');
+
+use \Cohesion\Environment\HTTPEnvironment;
+use \Cohesion\Structure\Factory\RoutingFactory;
+use \Cohesion\Structure\Factory\ViewFactory;
 
 $env = new HTTPEnvironment();
 $format = $env->getFormat();
