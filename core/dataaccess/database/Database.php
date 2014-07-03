@@ -1,4 +1,5 @@
 <?php
+namespace Cohesion\DataAccess\Database;
 
 interface Database {
     public function query($query, $binds = null);

@@ -1,10 +1,13 @@
 <?php
+namespace Cohesion\Structure\View;
+
+use Cohesion\Templating\TemplateEngine;
 
 class TemplateView extends View {
     protected $template;
     protected $engine;
 
-    public function TemplateView($template, TemplateEngine $engine, array $vars = array()) {
+    public function __construct($template, TemplateEngine $engine, array $vars = array()) {
         $this->initialiseVars($vars);
         $this->engine = $engine;
         $this->template = $template;

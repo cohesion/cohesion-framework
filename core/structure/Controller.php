@@ -1,4 +1,10 @@
 <?php
+namespace Cohesion\Structure;
+
+use \Cohesion\Config\Configurable;
+use \Cohesion\Config\Config;
+use \Cohesion\Util\Input;
+use \Auth;
 
 /**
  * The Controllers are the external facing code that access the input variables
@@ -10,12 +16,12 @@
  *
  * @author Adric Schreuders
  */
-abstract class Controller {
+abstract class Controller implements Configurable {
     protected $config;
     protected $input;
     protected $auth;
 
-    public function Controller(Config $config, Input $input = null, Auth $auth = null) {
+    public function __construct(Config $config, Input $input = null, Auth $auth = null) {
         $this->config = $config;
         $this->input = $input;
         $this->auth = $auth;

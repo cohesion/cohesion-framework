@@ -1,6 +1,10 @@
 <?php
+namespace Cohesion\Route;
 
-class Route {
+use \Cohesion\Config\Configurable;
+use \Cohesion\Config\Config;
+
+class Route implements Configurable {
 
     protected $uri;
     protected $config;
@@ -10,7 +14,7 @@ class Route {
     protected $functionName;
     protected $params;
 
-    public function Route($uri, $config) {
+    public function __construct(Config $config, $uri = null) {
         $this->uri = $uri;
         $this->config = $config;
         if (!$redirect = $this->getRedirect()) {
@@ -60,7 +64,7 @@ class Route {
                 }
             }
         }
-        $reflection = new ReflectionMethod($className, $functionName);
+        $reflection = new \ReflectionMethod($className, $functionName);
         $minParams = $reflection->getNumberOfRequiredParameters();
         $maxParams = $reflection->getNumberOfParameters();
         if (count($params) < $minParams) {
@@ -126,4 +130,4 @@ class Route {
     }
 }
 
-class RouteException extends RuntimeException {}
+class RouteException extends \RuntimeException {}

@@ -1,4 +1,5 @@
 <?php
+namespace Cohesion\DataAccess\Database;
 
 /**
  * Wrapper class for a mysql result
@@ -16,7 +17,7 @@ class MySQLResult implements DatabaseResult {
     private $rows;
     private $i;
 
-    public function MySQLResult($link, $result, $sql) {
+    public function __construct($link, $result, $sql) {
         $this->query = $sql;
         $this->insertId = $link->insert_id;
         $this->numCols = $link->field_count;
@@ -37,7 +38,7 @@ class MySQLResult implements DatabaseResult {
     public function row($index) {
         $index = (int)$index;
         if ($this->numRows < $index || $index < 0) {
-            throw new OutOfBoundsException("Index $index isn't within result of $this->numRows rows");
+            throw new \OutOfBoundsException("Index $index isn't within result of $this->numRows rows");
         } else {
             return $this->rows[$index];
         }

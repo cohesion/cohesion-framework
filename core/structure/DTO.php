@@ -1,4 +1,5 @@
 <?php
+namespace Cohesion\Structure;
 
 /**
  * Data Transfer Obeject (DTO)
@@ -16,8 +17,8 @@ abstract class DTO {
     const MAX_EMAIL_LENGTH = 60;
     const MAX_URL_LENGTH = 255;
 
-    public function DTO($vars) {
-        $this->reflection = new ReflectionClass($this);
+    public function __construct($vars) {
+        $this->reflection = new \ReflectionClass($this);
 
         $classProperties = $this->reflection->getProperties();
         $classVars = array();
@@ -50,10 +51,10 @@ abstract class DTO {
     public function setId($id) {
         $className = get_class($this);
         if (!$this->reflection->hasProperty('id')) {
-            throw new BadFunctionCallException("Bad call to setId() on $className which doesn't have an ID field");
+            throw new \BadFunctionCallException("Bad call to setId() on $className which doesn't have an ID field");
         }
         if ($this->id && $this->id != $id) {
-            throw new InvalidArgumentException("Cannot set $className ID field after it's already been set");
+            throw new \InvalidArgumentException("Cannot set $className ID field after it's already been set");
         }
         $this->id = $id;
     }
@@ -189,7 +190,7 @@ abstract class DTO {
     }
 
     protected function validateDate($date, &$errors = null) {
-        $date = DateTime::createFromFormat('d/m/Y', $date);
+        $date = \DateTime::createFromFormat('d/m/Y', $date);
         if (!$date && is_array($errors)) {
             $errors[] = 'Invalid date format';
         } else {

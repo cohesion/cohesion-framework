@@ -1,6 +1,11 @@
 <?php
+namespace Cohesion\Templating;
 
-class CohesionMo extends Mustache implements TemplateEngine {
+use \Cohesion\Config\Configurable;
+use \Cohesion\Config\Config;
+use \Cohesion\DataAccess\Cache\Cache;
+
+class CohesionMo extends \Mustache implements TemplateEngine, Configurable {
 
     protected $config;
     protected $cache;
@@ -8,10 +13,10 @@ class CohesionMo extends Mustache implements TemplateEngine {
 
     const TAG_TYPES = '#\^\/=!>\\{&<\-~';
 
-    public function CohesionMo(Config $config) {
+    public function __construct(Config $config) {
         parent::__construct();
         $this->config = $config;
-        $this->loader = new MustacheLoader($config->get('directory'), $config->get('extention'));
+        $this->loader = new \MustacheLoader($config->get('directory'), $config->get('extention'));
 
         $this->_modifiers['<'] = function ($tag_name, $leading, $trailing) {
             return $this->_renderPartial($this->_getVariable($tag_name), $leading, $trailing);
@@ -68,6 +73,7 @@ class CohesionMo extends Mustache implements TemplateEngine {
             $cdn = $cdns[crc32($asset) % count($cdns)];
         }
 
+        $version = '';
         if ($this->config->get('cdn.version') && $this->config->get('cache') instanceof Cache) {
             $versionCacheKey = $this->config->get('cdn.version.cache_prefix') . $asset;
             $version = $this->config->get('cache')->load($versionCacheKey);

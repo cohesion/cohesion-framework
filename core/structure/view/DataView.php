@@ -1,9 +1,12 @@
 <?php
+namespace Cohesion\Structure\View;
+
+use Cohesion\Structure\DTO;
 
 abstract class DataView extends View {
     protected $format;
 
-    public function DataView($data = null, $format = null) {
+    public function __construct($data = null, $format = null) {
         if ($data !== null) {
             $this->setData($data);
         }

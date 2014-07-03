@@ -1,14 +1,19 @@
-<?
+<?php
+namespace Cohesion\DataAccess\Cache;
+
+use \Cohesion\Config\Config;
+
 /**
  * APC wrapper
  */
 class APC extends Cache {
 
-    public function APC() {
+    public function __construct(Config $config = null) {
+        // No configuration necessary
     }
 
     public function load($key) {
-        $success;
+        $success = null;
         $value = apc_fetch($key, $success);
         if (!$success) {
             return null;
@@ -26,5 +31,5 @@ class APC extends Cache {
     }
 }
 
-class APCException extends CacheException {}
+class APCException extends \CacheException {}
 

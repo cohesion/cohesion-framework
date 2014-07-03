@@ -1,4 +1,9 @@
 <?php
+namespace Cohesion\Environment;
+
+use \Cohesion\Util\Input;
+use \Cohesion\Structure\Factory\ServiceFactory;
+use \HTTPAuth;
 
 class HTTPEnvironment extends Environment {
 
@@ -6,7 +11,7 @@ class HTTPEnvironment extends Environment {
 
     const DEFAULT_FORMAT = 'html';
 
-    public function HTTPEnvironment() {
+    public function __construct() {
         parent::__construct();
 
         if (!isset($_SESSION)) {

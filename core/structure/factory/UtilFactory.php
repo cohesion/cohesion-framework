@@ -1,4 +1,5 @@
 <?php
+namespace Cohesion\Structure\Factory;
 
 class UtilFactory extends AbstractFactory {
 
@@ -14,4 +15,4 @@ class UtilFactory extends AbstractFactory {
     }
 }
 
-class InvalidUtilException extends InvalidClassException {}
+class InvalidUtilException extends \InvalidClassException {}

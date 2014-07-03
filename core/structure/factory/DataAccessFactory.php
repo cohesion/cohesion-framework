@@ -1,4 +1,5 @@
 <?php
+namespace Cohesion\Structure\Factory;
 
 class DataAccessFactory extends AbstractFactory {
 
@@ -9,7 +10,7 @@ class DataAccessFactory extends AbstractFactory {
         if ($name === null) {
             $name = self::$environment->get('data_access.class.default');
             if ($name === null) {
-                throw new InvalidArgumentException("Data Access name must be provided");
+                throw new \InvalidArgumentException("Data Access name must be provided");
             }
         }
         $prefix = self::$environment->get('data_access.class.prefix');
@@ -21,7 +22,7 @@ class DataAccessFactory extends AbstractFactory {
         }
 
         // Check the class constructor to see what libraries it needs
-        $reflection = new ReflectionClass($className);
+        $reflection = new \ReflectionClass($className);
         $params = self::getConstructor($reflection)->getParameters();
         $values = array();
         foreach ($params as $i => $param) {
@@ -30,8 +31,8 @@ class DataAccessFactory extends AbstractFactory {
             }
             $type = $param->getClass()->getShortName();
             if (!isset($accesses[$type])) {
-                $typeReflection = new ReflectionClass($type);
-                if ($typeReflection->isSubclassOf('DAO')) {
+                $typeReflection = new \ReflectionClass($param->getClass()->getName());
+                if ($typeReflection->isSubclassOf('\Cohesion\Structure\DAO')) {
                     $access = self::createDataAccess($type);
                 } else {
                     $config = self::$environment->getConfig('data_access.' . strtolower($type));
@@ -39,13 +40,14 @@ class DataAccessFactory extends AbstractFactory {
                         throw new InvalidAccessException("Unknown access type. $type not set in the configuration");
                     }
                     $driver = $config->get('driver');
-                    if (!$driver) {
-                        $driver = $type;
+                    if ($driver) {
+                        $driver = "\Cohesion\DataAccess\\$type\\$driver";
+                        $typeReflection = new \ReflectionClass($driver);
+                    } else {
+                        $driver = $param->getClass()->getName();
                         if ($typeReflection->isAbstract()) {
                             throw new InvalidAccessException("No driver found for $type");
                         }
-                    } else {
-                        $typeReflection = new ReflectionClass($driver);
                     }
                     if (!class_exists($driver)) {
                         throw new InvalidAccessException("No class found for $driver driver");
@@ -66,7 +68,7 @@ class DataAccessFactory extends AbstractFactory {
         return $reflection->newInstanceArgs($values);
     }
 
-    private static function getConstructor(ReflectionClass $reflection) {
+    private static function getConstructor(\ReflectionClass $reflection) {
         $constructor = $reflection->getConstructor();
         if ($constructor) {
             return $constructor;
@@ -81,5 +83,5 @@ class DataAccessFactory extends AbstractFactory {
     }
 }
 
-class InvalidDataAccessException extends InvalidClassException {}
-class InvalidAccessException extends InvalidClassException {}
+class InvalidDataAccessException extends \InvalidClassException {}
+class InvalidAccessException extends \InvalidClassException {}

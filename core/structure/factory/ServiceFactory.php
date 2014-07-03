@@ -1,4 +1,7 @@
 <?php
+namespace Cohesion\Structure\Factory;
+
+use \Cohesion\Structure\Service;
 
 class ServiceFactory extends AbstractFactory {
 
@@ -6,7 +9,7 @@ class ServiceFactory extends AbstractFactory {
         if ($name === null) {
             $name = self::$environment->get('application.class.default');
             if ($name === null) {
-                throw new InvalidArgumentException("Service name must be provided");
+                throw new \InvalidArgumentException("Service name must be provided");
             }
         }
         $prefix = self::$environment->get('application.class.prefix');
@@ -30,4 +33,4 @@ class ServiceFactory extends AbstractFactory {
     }
 }
 
-class InvalidServiceException extends InvalidClassException {}
+class InvalidServiceException extends \InvalidClassException {}

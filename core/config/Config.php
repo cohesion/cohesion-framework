@@ -1,11 +1,12 @@
 <?php
+namespace Cohesion\Config;
 
 class Config {
 
     protected $data = array();
     protected $cache;
 
-    public function Config() {
+    public function __construct() {
     }
 
     public function setCache($cache) {

@@ -1,10 +1,15 @@
-<?
+<?php
+namespace Cohesion\DataAccess\Cache;
+
+use \Cohesion\Config\Configurable;
+use \Cohesion\Config\Config;
+
 /**
  * Abstract Cache class
  */
-abstract class Cache {
+abstract class Cache implements Configurable {
     protected $config;
-    public function Cache(Config $config) {
+    public function __construct(Config $config) {
         $this->config = $config;
     }
 
@@ -14,5 +19,3 @@ abstract class Cache {
 
     public abstract function delete($key);
 }
-
-class CacheException extends Exception {}

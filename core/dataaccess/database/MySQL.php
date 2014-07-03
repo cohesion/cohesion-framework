@@ -1,4 +1,8 @@
 <?php
+namespace Cohesion\DataAccess\Database;
+
+use \Cohesion\Config\Configurable;
+use \Cohesion\Config\Config;
 
 /**
  * Wrapper class for the database interactions
@@ -25,7 +29,7 @@
  *     ", array('name' => 'abc'));
  */
 
-class MySQL implements Database {
+class MySQL implements Database, Configurable {
 
     private $config;
 
@@ -35,7 +39,7 @@ class MySQL implements Database {
     private $inTransaction;
     private $savepoints;
 
-    public function MySQL(Config $config) {
+    public function __construct(Config $config) {
         $this->config = $config;
     }
 
@@ -96,7 +100,7 @@ class MySQL implements Database {
     }
 
     private function connect($host, $user, $password, $database, $charset = 'UTF8') {
-        $link = new mysqli($host, $user, $password, $database);
+        $link = new \mysqli($host, $user, $password, $database);
         if (mysqli_connect_errno()) {
             throw new MySQLConnectionException("Unable to connect to $host. " . mysqli_connect_error());
         }
@@ -230,7 +234,7 @@ class MySQL implements Database {
     }
 }
 
-class MySQLException extends DataAccessException {}
+class MySQLException extends \DataAccessException {}
 class MySQLInitialisationException extends MySQLException {}
 class MySQLConnectionException extends MySQLException {}
 class MySQLStatementException extends MySQLException {}

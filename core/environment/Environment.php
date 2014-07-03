@@ -1,4 +1,12 @@
-<?
+<?php
+namespace Cohesion\Environment;
+
+use \Cohesion\Config\Config;
+use \Cohesion\DataAccess\Cache\APC;
+use \Cohesion\Structure\Factory\RoutingFactory;
+use \Cohesion\Structure\Factory\ServiceFactory;
+use \Cohesion\Structure\Factory\ViewFactory;
+use \Cohesion\Structure\Factory\DataAccessFactory;
 
 class Environment {
 
@@ -12,7 +20,7 @@ class Environment {
     const DEFAULT_FORMAT = 'plain';
     const DEFAULT_LANGUAGE = 'en';
 
-    public function Environment() {
+    public function __construct() {
         $this->environment = isset($_SERVER['APPLICATION_ENV']) ? $_SERVER['APPLICATION_ENV'] : null;
 
         $config = new Config();
@@ -52,10 +60,9 @@ class Environment {
         if (!$this->production) {
             $cache->delete($config->get('global.autoloader.cache_key'));
         }
-        $autoloader = Autoloader::getInstance();
-        $autoloader->addClassPath(BASE_DIR . 'core/environment');
-        $autoloader->addClassPath(BASE_DIR . 'core/structure');
-        $autoloader->addClassPath(BASE_DIR . 'core/utils');
+
+        $autoloader = \Autoloader::getInstance();
+        $autoloader->addClassPath(BASE_DIR . 'core/templating');
         $autoloader->addClassPath(BASE_DIR . 'src');
         $autoloader->addClassPath(WEB_ROOT . 'controllers');
         $autoloader->addClassPath(WEB_ROOT . 'views');

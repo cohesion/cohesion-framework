@@ -1,4 +1,7 @@
 <?php
+namespace Cohesion\Structure\Factory;
+
+use Cohesion\Structure\View\InvalidTemplateEngineException;
 
 class ViewFactory extends AbstractFactory {
     protected static $defaultTemplate;
@@ -6,19 +9,20 @@ class ViewFactory extends AbstractFactory {
     protected static $vars;
 
     const DEFAULT_DATA_VIEW = 'JSON';
+    const VIEW_NAMESPACE = '\Cohesion\Structure\View\\';
 
     public static function createView($className = null, $template = null) {
         if ($className === null) {
             $className = self::$environment->get('view.class.default');
             if ($className === null) {
-                throw new InvalidArgumentException("View name must be provided");
+                throw new \InvalidArgumentException("View name must be provided");
             }
         }
         $className = self::$environment->get('view.class.prefix') . $className . self::$environment->get('view.class.suffix');
         if (!class_exists($className)) {
             throw new InvalidViewException("$className doesn't exist");
         }
-        $reflection = new ReflectionClass($className);
+        $reflection = new \ReflectionClass($className);
         $params = $reflection->getConstructor()->getParameters();
         $values = array();
         foreach ($params as $i => $param) {
@@ -81,15 +85,15 @@ class ViewFactory extends AbstractFactory {
         if (!$format) {
             $format = self::$environment->getFormatClass();
         }
-        $className = self::$environment->get('view.class.prefix') . $format . self::$environment->get('view.class.suffix');
+        $className = self::VIEW_NAMESPACE . self::$environment->get('view.class.prefix') . $format . self::$environment->get('view.class.suffix');
         if (!class_exists($className)) {
             throw new InvalidViewException("$className doesn't exist");
         }
-        if (!is_subclass_of($className, 'DataView')) {
-            $className = self::$environment->get('view.class.prefix') . self::DEFAULT_DATA_VIEW . self::$environment->get('view.class.suffix');
+        if (!is_subclass_of($className, self::VIEW_NAMESPACE . 'DataView')) {
+            $className = self::VIEW_NAMESPACE . self::$environment->get('view.class.prefix') . self::DEFAULT_DATA_VIEW . self::$environment->get('view.class.suffix');
         }
         return new $className($data);
     }
 }
 
-class InvalidViewException extends InvalidClassException {}
+class InvalidViewException extends \InvalidClassException {}

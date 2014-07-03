@@ -1,4 +1,8 @@
 <?php
+namespace Cohesion\Util;
+
+use \Cohesion\Config\Config;
+use \Cohesion\Structure\Factory\ViewFactory;
 
 class Email implements Util {
 
@@ -30,11 +34,11 @@ class Email implements Util {
      * Send an email.
      *
      * Uses named parameters
-     * @param to mixed Either an email address or an array of addresses
-     * @param view string Optional view name
-     * @param vars array Optional array of additional vars to be rendered
-     * @param subject string The email subject
-     * @param params array additional parameters
+     * @param $to mixed Either an email address or an array of addresses
+     * @param $view string Optional view name
+     * @param $vars array Optional array of additional vars to be rendered
+     * @param $subject string The email subject
+     * @param $params array additional parameters
      *          cc mixed Same as the to field but is optional
      *          bcc mixed Same as the cc field
      *          template string Optional base layout template
@@ -132,6 +136,6 @@ class Email implements Util {
     }
 }
 
-class EmailException extends Exception {}
+class EmailException extends \Exception {}
 class InvalidEmailException extends EmailException {}
 class SendEmailException extends EmailException {}

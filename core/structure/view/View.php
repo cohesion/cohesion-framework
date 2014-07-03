@@ -1,4 +1,5 @@
 <?php
+namespace Cohesion\Structure\View;
 
 abstract class View {
 
@@ -24,4 +25,4 @@ abstract class View {
     }
 }
 
-class ViewException extends Exception {}
+class ViewException extends \Exception {}

@@ -1,4 +1,5 @@
 <?php
+namespace Cohesion\Util;
 
 class Curl {
 
@@ -53,13 +54,6 @@ class Curl {
         curl_close($ch);
 
         return array('header' => $header, 'body' => json_decode($body, true));
-
-        if ($response) {
-            list($header, $body) = explode("\r\n\r\n", $response, 2);
-            return array('header' => $header, 'body' => json_decode($body, true));
-        } else {
-            throw new CurlException('Unable to contact ' . $url);
-        }
     }
 }
 

@@ -1,4 +1,5 @@
 <?php
+namespace Cohesion\Structure\View;
 
 class JSONView extends DataView {
     const CONTENT_TYPE = 'application/json';

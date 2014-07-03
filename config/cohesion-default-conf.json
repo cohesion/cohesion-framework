@@ -103,7 +103,7 @@
          * want to use a different currently unsupported template engine you
          * can wrap it in a new class that implements the interface.
          */
-        "engine": "CohesionMo",
+        "engine": "\\Cohesion\\Templating\\CohesionMo",
         "directory": "templates", // Root template directory
         "extention": "html", // Template extension
         "default_layout_template": "index", // Root default template

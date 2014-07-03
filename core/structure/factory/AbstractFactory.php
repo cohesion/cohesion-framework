@@ -1,4 +1,7 @@
 <?php
+namespace Cohesion\Structure\Factory;
+
+use Cohesion\Environment\Environment;
 
 abstract class AbstractFactory {
     protected static $environment;

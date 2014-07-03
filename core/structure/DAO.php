@@ -1,4 +1,7 @@
 <?php
+namespace Cohesion\Structure;
+
+use \Cohesion\DataAccess\Database\Database;
 
 /**
  * Data Access Object (DAO)
@@ -17,7 +20,7 @@ abstract class DAO {
      * need to use by adding them as constructor parameters. The DAOFactory
      * will then use the config to setup the data access library.
      */
-    public function DAO(Database $db) {
+    public function __construct(Database $db) {
         $this->db = $db;
     }
 }

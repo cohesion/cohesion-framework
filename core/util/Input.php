@@ -1,4 +1,5 @@
 <?php
+namespace Cohesion\Util;
 
 /**
  * Input handler
@@ -9,7 +10,7 @@
  */
 class Input {
     private $vars;
-    public function Input($vars) {
+    public function __construct($vars) {
         $this->vars = $vars;
     }
 
