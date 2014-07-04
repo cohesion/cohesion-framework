@@ -1,11 +1,11 @@
 <section>
-    {{# error}}
-        <p>{{error}}</p>
-    {{/ error}}
-    {{^ error}}
+    {{# errors}}
+        <p>{{.}}</p>
+    {{/ errors}}
+    {{^ errors}}
         <p>
             We are unable to perform your request at this time due to an Internal Server Error. 
             If the problem persists please contact us.
         </p>
-    {{/ error}}
+    {{/ errors}}
 </section>

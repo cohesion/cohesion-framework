@@ -22,8 +22,11 @@ class TemplateView extends View {
     }
 
     public function setErrors($errors) {
+        parent::setErrors($errors);
         foreach ($errors as $key => $val) {
-            $this->addVar($key . '_error', $val);
+            if (!is_numeric($key)) {
+                $this->addVar($key . '_error', $val);
+            }
         }
         $this->addVar('errors', $errors);
     }

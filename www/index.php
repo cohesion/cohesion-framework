@@ -52,6 +52,8 @@ try {
 
 } catch (NotFoundException $e) {
     notFound($format, $route->getUri());
+} catch (UnauthorizedEception $e) {
+    unauthorized($format, $e, $route->getUri());
 
 // User safe error message (usually invalid input, etc)
 } catch (UserSafeException $e) {
@@ -75,6 +77,25 @@ function notFound($format, $uri) {
             $view = ViewFactory::createDataView();
             $view->setError("There is no resource located at $uri");
         }
+        echo $view->generateView();
+    }
+}
+
+function unauthorized($format, $e, $uri) {
+    http_response_code(403);
+    $message = $e->getMessage();
+    if (!$message) {
+        $message = "You are not authorized to access $uri";
+    }
+    if ($format == 'plain') {
+        echo $message . "\n";
+    } else {
+        if ($format == 'html') {
+            $view = ViewFactory::createView('Unauthorized');
+        } else {
+            $view = ViewFactory::createDataView(null, $format);
+        }
+        $view->setError($message);
         echo $view->generateView();
     }
 }
@@ -111,7 +132,12 @@ function serverError($format, $e, $production = false) {
             }
         }
         if (!$production) {
-            $view->setError($e->getMessage());
+            $errors = array($e->getMessage());
+            foreach ($e->getTrace() as $trace) {
+                $file = str_replace(BASE_DIR, '', $trace['file']);
+                $errors[] = "$file: {$trace['line']}";
+            }
+            $view->setErrors($errors);
         }
         echo $view->generateView();
     }

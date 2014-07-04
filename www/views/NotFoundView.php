@@ -1,12 +1,15 @@
-<?
+<?php
 
-class NotFoundView extends View {
-    public function NotFoundView($config, $resource = null) {
-        parent::__construct($config);
-        $vars['page'] = '404';
+class NotFoundView extends MyView {
+    public function __construct($template, $engine, $vars) {
+        parent::__construct($template, $engine, $vars);
+        $vars['page'] = 'errors/404';
         $vars['title'] = '404 - Resource Not Found';
-        $vars['resource'] = $resource;
         $this->addVars($vars);
+    }
+
+    public function setResource($resource) {
+        $this->addVar('resource', $resource);
     }
 
     public function generateView() {

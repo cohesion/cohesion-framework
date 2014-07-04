@@ -21,7 +21,7 @@ abstract class View {
     }
 
     public function setError($error) {
-        $this->errors = array($error);
+        $this->setErrors(array($error));
     }
 }
 
