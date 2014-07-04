@@ -1,12 +1,12 @@
-<?
+<?php
+
+use \Cohesion\Structure\Controller;
+use \Cohesion\Structure\Factory\ViewFactory;
 
 class HomeController extends Controller {
 
-    public function run() {
-    }
-
     public function index() {
-        $view = new HomeView($this->env->getConfig('template'));
+        $view = ViewFactory::createView('Home');
         return $view->generateView();
     }
 }

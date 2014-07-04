@@ -31,11 +31,11 @@ class Config {
             $contents = file_get_contents($file);
             $params = json_decode($this->json_minify($contents), true);
             if (!$params) {
-                throw new InvalidArgumentException('Invlid config file format. ' . $file . ' cannot be decoded as JSON');
+                throw new \InvalidArgumentException('Invlid config file format. ' . $file . ' cannot be decoded as JSON');
             }
             $this->load($params, $key);
         } else {
-            throw new InvalidArgumentException('Invalid config file format');
+            throw new \InvalidArgumentException('Invalid config file format');
         }
     }
 
@@ -63,7 +63,7 @@ class Config {
      */
     public function add($key, $value) {
         if (isset($this->data[$key])) {
-            throw new InvalidArgumentException("Key $key is already set");
+            throw new \InvalidArgumentException("Key $key is already set");
         }
         $this->data[$key] = $value;
     }
