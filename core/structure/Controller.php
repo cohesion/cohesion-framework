@@ -4,7 +4,7 @@ namespace Cohesion\Structure;
 use \Cohesion\Config\Configurable;
 use \Cohesion\Config\Config;
 use \Cohesion\Util\Input;
-use \Auth;
+use \Cohesion\Auth\Auth;
 
 /**
  * The Controllers are the external facing code that access the input variables

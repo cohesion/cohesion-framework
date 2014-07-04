@@ -3,6 +3,7 @@ namespace Cohesion\Environment;
 
 use \Cohesion\Config\Config;
 use \Cohesion\DataAccess\Cache\APC;
+use \Cohesion\Auth\Auth;
 use \Cohesion\Structure\Factory\RoutingFactory;
 use \Cohesion\Structure\Factory\ServiceFactory;
 use \Cohesion\Structure\Factory\ViewFactory;
@@ -31,7 +32,7 @@ class Environment {
             if (file_exists($envConfFile)) {
                 $config->loadFromFile($envConfFile);
             } else {
-                throw new Exception("Missing config file for {$this->environment} environment");
+                throw new \Exception("Missing config file for {$this->environment} environment");
             }
         }
         $this->config = $config;

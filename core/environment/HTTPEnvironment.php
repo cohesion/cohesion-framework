@@ -3,7 +3,7 @@ namespace Cohesion\Environment;
 
 use \Cohesion\Util\Input;
 use \Cohesion\Structure\Factory\ServiceFactory;
-use \HTTPAuth;
+use \Cohesion\Auth\HTTPAuth;
 
 class HTTPEnvironment extends Environment {
 
