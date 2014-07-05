@@ -8,7 +8,7 @@
     },
     "require": {
         "php": ">=5.4.0",
-        "cohesion/cohesion-core": "*"
+        "cohesion/cohesion-core": "dev-master"
     }
     "repositories": [
         {
