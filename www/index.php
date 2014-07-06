@@ -4,7 +4,7 @@ if (!isset($_SERVER) || !isset($_SERVER['DOCUMENT_ROOT'])) {
     throw new Exception('DOCUMENT_ROOT must be defined in the server environment variables');
 }
 define('WEB_ROOT', $_SERVER['DOCUMENT_ROOT'] . '/');
-define('BASE_DIR', WEB_ROOT . '../');
+define('BASE_DIR', dirname($_SERVER['DOCUMENT_ROOT']) . '/');
 define('CONFIG_DIR', BASE_DIR . 'config/');
 
 function exceptionErrorHandler($errno, $errstr, $errfile, $errline ) {
@@ -12,10 +12,9 @@ function exceptionErrorHandler($errno, $errstr, $errfile, $errline ) {
 }
 set_error_handler("exceptionErrorHandler");
 
-require_once(BASE_DIR . 'core/structure/exceptions.php');
-require_once(BASE_DIR . 'core/autoload.php');
-require_once(BASE_DIR . 'core/vendor/autoload.php');
-require_once(BASE_DIR . 'core/util/Autoloader.php');
+require_once(BASE_DIR . 'vendor/autoload.php');
+require_once(BASE_DIR . 'vendor/cohesion/cohesion-core/src/Structure/exceptions.php');
+require_once(BASE_DIR . 'vendor/cohesion/cohesion-core/src/Util/Autoloader.php');
 
 use \Cohesion\Environment\HTTPEnvironment;
 use \Cohesion\Structure\Factory\RoutingFactory;
@@ -133,9 +132,17 @@ function serverError($format, $e, $production = false) {
         }
         if (!$production) {
             $errors = array($e->getMessage());
-            foreach ($e->getTrace() as $trace) {
-                $file = str_replace(BASE_DIR, '', $trace['file']);
-                $errors[] = "$file: {$trace['line']}";
+            foreach ($e->getTrace() as $i => $trace) {
+                if ($i === 0) {
+                    $file = $e->getFile();
+                    $line = $e->getLine();
+                } else {
+                    if (isset($trace['file'])) {
+                        $file = str_replace(BASE_DIR, '', $trace['file']);
+                        $line = $trace['line'];
+                    }
+                }
+                $errors[] = "$file($line): {$trace['function']}";
             }
             $view->setErrors($errors);
         }
