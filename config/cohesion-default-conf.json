@@ -96,32 +96,6 @@
      */
     "view": {
         /**
-         * The default templating engine is CohesionMo which is basically an
-         * extended version of Mustache with a couple of added functionalities
-         * but can be overwritten.
-         * The engine must implement the TemplateEngine interface so if you
-         * want to use a different currently unsupported template engine you
-         * can wrap it in a new class that implements the interface.
-         */
-        "engine": "\\Cohesion\\Templating\\CohesionMo",
-        "directory": "templates", // Root template directory
-        "extention": "html", // Template extension
-        "default_layout_template": "index", // Root default template
-        /**
-         * template_vars is a set of default variables to be available in every
-         * template.
-         */
-        "template_vars": {
-            "title": "Cohesion",
-            "site_name": "Cohesion",
-            "asset_path": {
-                "root": "/assets",
-                "javascript": "/assets/js/",
-                "images": "/assets/images/",
-                "style": "/assets/style/" // CSS
-            }
-        },
-        /**
          * Used to define the class names so that the ViewFactory can create
          * the views based on just the base name. Eg, 'home' will create a
          * HomeView instance.
@@ -130,6 +104,55 @@
             "default": "",
             "prefix": "",
             "suffix": "View"
+        },
+        /**
+         * The default templating engine is CohesionMo which is basically an
+         * extended version of Mustache with a couple of added functionalities
+         * but can be overwritten.
+         * The engine must implement the TemplateEngine interface so if you
+         * want to use a different currently unsupported template engine you
+         * can wrap it in a new class that implements the interface.
+         */
+        "template": {
+            "engine": "\\Cohesion\\Templating\\CohesionMo",
+            "directory": "www/templates", // Root template directory
+            "extension": "html", // Template extension
+            "default_layout": "index", // Root default template
+            /**
+             * vars is a set of default variables to be available in every
+             * template.
+             */
+            "vars": {
+                "title": "Cohesion",
+                "site_name": "Cohesion",
+                "asset_path": {
+                    "root": "/assets",
+                    "javascript": "/assets/js/",
+                    "images": "/assets/images/",
+                    "style": "/assets/style/" // CSS
+                }
+            },
+            /**
+             * To cache prerendered templates set either a directory or a ttl.
+             * If you set the directory it will store the prerendered templates
+             * on disk within that directory. The directory can either be a
+             * relative path to the base directory or an absolute path
+             * starting from '/'. Make sure the application server has write
+             * access to the directory.
+             * If you don't set a directory it will use the default system
+             * cache and you can set the `ttl` for the cache keys.
+             */
+            /*
+            "cache": false // Caching disabled
+            */
+            /*
+            "cache": {
+                "directory": "www/rendered_templates"
+            }
+            */
+            "cache": {
+                "ttl": 3600
+            }
         },
         /**
          * CDN is OPTIONAL
@@ -146,7 +169,7 @@
              * hosts will allow clients to download more assets concurrently.
              */
             "hosts": [
-                "//localhost"
+                // "//localhost"
             ],
             /**
              * Versioning is used to invalidate assets when they change.
