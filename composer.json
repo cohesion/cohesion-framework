@@ -1,20 +1,14 @@
 {
-    "name": "cohesion/framework",
+    "name": "cohesion/cohesion-framework",
     "license": "MIT",
     "type": "project",
     "description": "The Cohesion distribution",
     "autoload": {
-        "psr-0": { "": "src/" }
+        "psr-4": { "": "src/" }
     },
     "require": {
         "php": ">=5.4.0",
         "cohesion/cohesion-core": "dev-master"
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/cohesion/cohesion-core"
-        }
-    ]
+    }
 }
 
