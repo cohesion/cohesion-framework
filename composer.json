@@ -2,7 +2,8 @@
     "name": "cohesion/cohesion-framework",
     "license": "MIT",
     "type": "project",
-    "description": "The Cohesion distribution",
+    "keywords": ["framework"],
+    "description": "The Cohesion PHP Framework distribution",
     "autoload": {
         "psr-4": { "": "src/" }
     },
