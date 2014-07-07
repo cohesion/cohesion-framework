@@ -5,6 +5,19 @@ The primary objective for creating this framework is to provide a simple framewo
 
 Cohesion is more than just a Framework, it's a development guideline that tries to enforce best practices to improve mantainability.
 
+## Contents
+* [Origins](#origins)
+* [Code Structure](#code-structure)
+    * [Controllers](#controllers)
+    * [Business Logic](#services---business-logic)
+    * [Object Data](#data-transfer-objects-dtos---object-data)
+    * [Data Access Logic](#data-access-objects-daos---data-access-logic)
+    * [Views](#views)
+* [Utility classes](#utility-classes)
+    * [Database Interaction](#database-interaction)
+    * [Configuration](#configuration)
+    * [Input Handling](#input-handler)
+* [Features](#features)
 
 ## Origins
 
