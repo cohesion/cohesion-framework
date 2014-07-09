@@ -43,7 +43,7 @@ $params = $route->getParameterValues();
 try {
     $controller = new $class($env->getConfig(), $env->input(), $env->auth());
     if ($params) {
-        $output = call_user_method_array($function, $controller, $params);
+        $output = call_user_func_array(array($controller, $function), $params);
     } else {
         $output = $controller->$function();
     }
