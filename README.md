@@ -21,9 +21,10 @@ Cohesion is more than just a Framework, it's a development guideline that tries 
     * [Input Handling](#input-handler)
 * [Features](#features)
 * [Installing Cohesion](#installing-cohesion)
+    * [Requirements](#requirements)
     * [Installing Composer](#installing-composer)
-    * [Installing Cohesion with Composer](#installing-cohesion-with-composer)
     * [Installing Nginx](#installing-nginx)
+    * [Installing Cohesion with Composer](#installing-cohesion-with-composer)
     * [Setting up Nginx server](#setting-up-nginx-server)
 * [Configuration](#configuration)
     * [File Structure](#file-structure)
@@ -149,7 +150,7 @@ listen = /var/run/php5-fpm.sock
 [...]
 ```
 
-#### Installing Composer
+### Installing Composer
 
 [Composer](https://getcomposer.org/) is the package manager used by modern PHP applications and is the only recommended way to install Cohesion. To install composer run these commands:
 
