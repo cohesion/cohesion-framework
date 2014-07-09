@@ -6,6 +6,31 @@ The primary objective for creating this framework is to provide a simple framewo
 Cohesion is more than just a Framework, it's a development guideline that tries to enforce best practices to improve mantainability.
 
 
+## Contents
+
+* [Origins](#origins)
+* [Code Structure](#code-structure)
+    * [Controllers](#controllers)
+    * [Business Logic](#services---business-logic)
+    * [Object Data](#data-transfer-objects-dtos---object-data)
+    * [Data Access Logic](#data-access-objects-daos---data-access-logic)
+    * [Views](#views)
+* [Utility classes](#utility-classes)
+    * [Database Interaction](#database-interaction)
+    * [Configuration Library](#configuration-library)
+    * [Input Handling](#input-handler)
+* [Features](#features)
+* [Installation](#installation)
+    * [Installing Composer](#installing-composer)
+    * [Installing Cohesion with Composer](#installing-cohesion-with-composer)
+    * [Installing Nginx](#installing-nginx)
+    * [Setting up Nginx server](#setting-up-nginx-server)
+* [Configuration](#configuration)
+    * [File Structure](#file-structure)
+    * [Environment specific configuration](#environment-specific-configuration)
+* [Development](#development)
+
+
 ## Origins
 
 Cohesion started from me deciding to start a new project in PHP. I didn't have much experience with many PHP frameworks so rather than looking through all the existing frameworks and picking the one that seemed to make the most sense to me, I decided to list all the 'features' I wanted in a framework before trying to find one suitable.
@@ -61,7 +86,7 @@ Cohesion comes with several extremely lightweight utility classes such as input 
 A MySQL database library is provided to provide safe interaction with MySQL databases. The database class includes support for master/slave queries, transactions, named variables, as well as many other features. For more information on the database library read the documentation at the start of the [MySQL.php](core/dataaccess/database/MySQL.php) file.
 
 
-### Configuration
+### Configuration Library
 
 A config object class is provided for easy and extendible configuration. The config object will read one or more JSON formatted files and sections of the config can be given to classes to provide either business rule constants or library configurations. It is designed so that you can have a default config file with all the default configurations for your application then you can have a production config file that will overwrite only the variables within that config file such as database access etc.
 
@@ -70,5 +95,126 @@ A config object class is provided for easy and extendible configuration. The con
 
 An extremely simple input handler is provided. The input handler doesn't do anything to prevent SQL injection or XSS as these are handled by the Database library and the Views respectively.
 
+
 ## Features
+
 For more details about the features of Cohesion view the [Current Features](https://github.com/adric-s/cohesion-framework/wiki/Current-Features) section in the wiki.
+
+
+## Installation
+
+
+### Installing Composer
+
+[Composer](https://getcomposer.org/) is the package manager used by modern PHP applications and is the only recommended way to install Cohesion. To install composer run these commands:
+
+```bash
+$ curl -sS https://getcomposer.org/installer | php
+$ sudo mv composer.phar /usr/local/bin/composer
+```
+
+
+### Installing Cohesion with Composer
+
+Once composer is installed run the following command to create a new project in a `myproject` directory using Cohesion:
+
+```bash
+$ composer create-project cohesion/cohesion-framework -sdev myproject
+```
+
+Composer will then download all required dependencies and create the project directory structure for you.
+
+After composer finishes the installation process the installer will ask you `Do you want to remove the existing VCS (.git, .svn..) history? [Y,n]?` just hit `<Enter>` to safely remove the Cohesion git history. This will prevent you from polluting your projects version history with Cohesion commits. It will also make it easier to set up your own version control for your project.
+
+
+### Installing Nginx
+
+It's recommended to use [Nginx](http://en.wikipedia.org/wiki/Nginx) with Cohesion. Nginx is a very lightweight web server and is much more efficient than Apache and very easy to configure.
+
+For Debian/Ubuntu:
+
+```bash
+$ sudo apt-get install nginx
+```
+
+
+### Setting up Nginx server
+
+If you want to version control your config create an `nginx.conf` somewhere sensible within your `myproject/` directory then create a sym link to it in the nginx config directory.
+
+```bash
+$ sudo ln -s /full/path/to/myproject/nginx.conf /etc/nginx/sites-available/myproject
+$ sudo ln -s /etc/nginx/sites-available/myproject /etc/nginx/sites-enabled/myproject
+```
+**Note:** Your nginx directory might be somewhere else depending on your distribution.
+
+To start off with if you just want to test it on your localhost open up your `nginx.conf` file and enter:
+
+```nginx
+server {
+    listen 80;
+    server_name localhost;
+
+    root /full/path/to/myproject/www;
+
+    location ~ ^/assets/ {
+        access_log      off;
+        expires         1d;
+    }
+
+    location / {
+        index /index.php;
+        try_files $uri /index.php?$args;
+        fastcgi_pass unix:/var/run/php5-fpm.sock;
+        fastcgi_index index.php;
+        # fastcgi_param APPLICATION_ENV local;
+        include fastcgi_params;
+    }
+}
+```
+
+Restart nginx
+```bash
+sudo service nginx restart
+```
+
+Now you should be able to see a default Cohesion welcome page when you go to [http://localhost](http://localhost).
+
+You will obviously need to change the `nginx.conf` slightly for your different environments.
+
+
+## Configuration
+
+Configuration files are JSON formatted and can include comments. The configuration files are set up in a cascading fashion where loading subsequent configurations will overwrite just the values that are specified in that config and the unspecified configurations are left unchanged.
+
+The default Cohesion configuration is located at `myproject/config/cohesion-default-conf.json`. It is not recommended to make any changes to this file directly as it may make it harder to resolve any conflicts etc if we update it. Instead you should put all your default configurations in the `myproject/config/default-conf.json` file. Remember you don't need to implement all the settings, only add the ones that you want to do differently from the cohesion defaults.
+
+
+### File Structure
+
+The configuration is very well structured and documented so make sure you take the time to read the comments in the cohesion default configuration file about what each setting does.
+
+When constructing various objects and libraries they will be given a sub section of the configuration so it's important to get the structure right.
+
+All objects and libraries will have access to the `global` section.
+
+Each Service that you create will get a copy of the `application` section. The view and templating library will get the `view` section. The database class will use a copy of the `data_access.database`. And so on and so forth.
+
+
+### Environment Specific Configuration
+
+For environment specific configurations such as different database settings, etc for your dev, staging and production environments. These are just examples you can have separate configuration for what ever different environments you might have. Simply create additional configuration files in the form `{environment}-conf.json`. For example, `local-conf.json` or `production-conf.json`.
+
+In the Nginx config file we created earlier there is a commented out line for the `fastcgi_param`. Uncomment that line and change `local` to the environment config you want to use.
+
+Again these are cascaded so you only need to include the settings that are different for that environment and it will get the rest of the settings from your `default-conf.json` and the `cohesion-default-conf.json`.
+
+
+## Development
+
+Alright! Now you're ready to start coding your application. 
+
+We'll be adding some information on how to start developing your application as well as some example applications soon.
+
+
+
