@@ -29,6 +29,7 @@ Cohesion is more than just a Framework, it's a development guideline that tries 
 * [Configuration](#configuration)
     * [File Structure](#file-structure)
     * [Environment specific configuration](#environment-specific-configuration)
+    * [Configuration Options](#configuration-options)
 * [Development](#development)
 
 
@@ -223,6 +224,11 @@ When constructing various objects and libraries they will be given a sub section
 All objects and libraries will have access to the `global` section.
 
 Each Service that you create will get a copy of the `application` section. The view and templating library will get the `view` section. The database class will use a copy of the `data_access.database`. And so on and so forth.
+
+
+### Configuration Options
+
+For a full list of the configuration options see the [Configuration wiki page](https://github.com/cohesion/cohesion-framework/wiki/Configuration#configuration-options)
 
 
 ### Environment Specific Configuration
