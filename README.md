@@ -20,7 +20,7 @@ Cohesion is more than just a Framework, it's a development guideline that tries 
     * [Configuration Library](#configuration-library)
     * [Input Handling](#input-handler)
 * [Features](#features)
-* [Installation](#installation)
+* [Installing Cohesion](#installing-cohesion)
     * [Installing Composer](#installing-composer)
     * [Installing Cohesion with Composer](#installing-cohesion-with-composer)
     * [Installing Nginx](#installing-nginx)
@@ -101,16 +101,70 @@ An extremely simple input handler is provided. The input handler doesn't do anyt
 For more details about the features of Cohesion view the [Current Features](https://github.com/adric-s/cohesion-framework/wiki/Current-Features) section in the wiki.
 
 
-## Installation
+## Installing Cohesion
+
+This documentation currently focuses on installing Cohesion on a Debian/Ubuntu system. 
+
+### Requirements
+
+Once PHP is installed and set up adding additional libraries will be handled by Composer but there're still a few things you need to install yourself before then.
+
+* PHP version 5.4 or above
+* PHP-FPM
+* MySQLnd extension
+* APCu extension
 
 
-### Installing Composer
+#### Installing PHP and required extensions
+
+```bash
+$ sudo apt-get install php5 mysql-client php5-mysqlnd php5-fpm php5-curl php-pear php5-dev
+```
+
+Install APCu for fast access caching.
+```bash
+$ sudo pecl install apcu-beta
+```
+You'll most likely have to add the extension to your php.ini.
+```bash
+$ sudo echo "extension=apcu.so" > /etc/php5/mods-available/apcu.ini
+$ sudo ln -s /etc/php5/mods-available/apcu.ini /etc/php5/conf.d/20-apcu.ini
+$ sudo ln -s /etc/php5/mods-available/apcu.ini /etc/php5/fpm/conf.d/20-apcu.ini
+```
+The paths may be different depending on your distribution
+
+#### Make PHP-FPM use a Unix socket
+
+By default PHP-FPM is listening on port 9000 on 127.0.0.1. It is also possible to make PHP-FPM use a Unix socket which avoids the TCP overhead. To do this, open `/etc/php5/fpm/pool.d/www.conf`
+
+```bash
+$ sudo vi /etc/php5/fpm/pool.d/www.conf
+```
+find the existing `listen` line and comment it out and add the new one as shown here:
+
+```conf
+[...]
+;listen = 127.0.0.1:9000
+listen = /var/run/php5-fpm.sock
+[...]
+```
+
+#### Installing Composer
 
 [Composer](https://getcomposer.org/) is the package manager used by modern PHP applications and is the only recommended way to install Cohesion. To install composer run these commands:
 
 ```bash
 $ curl -sS https://getcomposer.org/installer | php
 $ sudo mv composer.phar /usr/local/bin/composer
+```
+
+
+### Installing Nginx
+
+It's recommended to use [Nginx](http://en.wikipedia.org/wiki/Nginx) with Cohesion. Nginx is a very lightweight web server and is much more efficient than Apache and very easy to configure.
+
+```bash
+$ sudo apt-get install nginx
 ```
 
 
@@ -127,51 +181,23 @@ Composer will then download all required dependencies and create the project dir
 After composer finishes the installation process the installer will ask you `Do you want to remove the existing VCS (.git, .svn..) history? [Y,n]?` just hit `<Enter>` to safely remove the Cohesion git history. This will prevent you from polluting your projects version history with Cohesion commits. It will also make it easier to set up your own version control for your project.
 
 
-### Installing Nginx
-
-It's recommended to use [Nginx](http://en.wikipedia.org/wiki/Nginx) with Cohesion. Nginx is a very lightweight web server and is much more efficient than Apache and very easy to configure.
-
-For Debian/Ubuntu:
-
-```bash
-$ sudo apt-get install nginx
-```
-
-
 ### Setting up Nginx server
 
-If you want to version control your config create an `nginx.conf` somewhere sensible within your `myproject/` directory then create a sym link to it in the nginx config directory.
+Default Nginx configurations are provided within the `/config/nginx/` directory of your project. So that we can keep our server configurations in version control we'll just link to the configuration file you want to use for the current environment within our project.
 
 ```bash
-$ sudo ln -s /full/path/to/myproject/nginx.conf /etc/nginx/sites-available/myproject
-$ sudo ln -s /etc/nginx/sites-available/myproject /etc/nginx/sites-enabled/myproject
+$ sudo ln -s /full/path/to/myproject/conf/nginx/local.conf /etc/nginx/sites-available/myproject-local
+$ sudo ln -s /etc/nginx/sites-available/myproject-local /etc/nginx/sites-enabled/myproject
 ```
 **Note:** Your nginx directory might be somewhere else depending on your distribution.
 
-To start off with if you just want to test it on your localhost open up your `nginx.conf` file and enter:
-
-```nginx
-server {
-    listen 80;
-    server_name localhost;
-
-    root /full/path/to/myproject/www;
-
-    location ~ ^/assets/ {
-        access_log      off;
-        expires         1d;
-    }
-
-    location / {
-        index /index.php;
-        try_files $uri /index.php?$args;
-        fastcgi_pass unix:/var/run/php5-fpm.sock;
-        fastcgi_index index.php;
-        # fastcgi_param APPLICATION_ENV local;
-        include fastcgi_params;
-    }
-}
+Open up the configuration and set the `root` path to the `www` directory within your project.
+```bash
+$ vi config/nginx/local.conf
 ```
+
+You can create additional Nginx configuration files for your different environments just remember to change the `server_name`, `root` path and `APPLICATION_ENV`.
+
 
 Restart nginx
 ```bash
@@ -179,9 +205,6 @@ sudo service nginx restart
 ```
 
 Now you should be able to see a default Cohesion welcome page when you go to [http://localhost](http://localhost).
-
-You will obviously need to change the `nginx.conf` slightly for your different environments.
-
 
 ## Configuration
 
