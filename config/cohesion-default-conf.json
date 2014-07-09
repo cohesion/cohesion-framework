@@ -252,6 +252,7 @@
             "user": "root",
             "password": "",
             "database": "cohesion",
+            "charset": "UTF8",
             /**
              * slave is OPTIONAL
              * The slave is used in a master-slave database setup.
