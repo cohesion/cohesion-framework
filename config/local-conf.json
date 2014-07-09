@@ -1,0 +1,7 @@
+{
+    "global": {
+        "production": false,
+        "domain_name": "localhost"
+    }
+}
+
