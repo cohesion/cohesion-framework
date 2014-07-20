@@ -190,6 +190,7 @@ Default Nginx configurations are provided within the `/config/nginx/` directory 
 ```bash
 $ sudo ln -s /full/path/to/myproject/conf/nginx/local.conf /etc/nginx/sites-available/myproject-local
 $ sudo ln -s /etc/nginx/sites-available/myproject-local /etc/nginx/sites-enabled/myproject
+$ sudo rm /etc/nginx/sites-enabled/default
 ```
 **Note:** Your nginx directory might be somewhere else depending on your distribution.
 
