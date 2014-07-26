@@ -5,7 +5,7 @@ The primary objective for creating this framework is to provide a simple framewo
 
 Cohesion is more than just a Framework, it's a development guideline that tries to enforce best practices to improve mantainability.
 
-[Documentation Hosted on Readthedocs](http://cohesion.readthedocs.org/en/latest/index.html)
+[Documentation Hosted on Read the Docs](http://cohesion.readthedocs.org/en/latest/index.html)
 
 [Documentation repository](https://github.com/cohesion/cohesion-docs)
 
