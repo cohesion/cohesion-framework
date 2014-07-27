@@ -9,6 +9,6 @@ Cohesion is more than just a Framework, it's a development guideline that tries 
 
 [Documentation repository](https://github.com/cohesion/cohesion-docs)
 
-[Cohesion Core Package repository](https://github.com/cohesion/cohesion-docs)
+[Cohesion Core Package repository](https://github.com/cohesion/cohesion-core)
 
 
