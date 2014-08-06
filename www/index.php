@@ -51,7 +51,7 @@ try {
 
 } catch (NotFoundException $e) {
     notFound($format, $route->getUri());
-} catch (UnauthorizedEception $e) {
+} catch (UnauthorizedException $e) {
     unauthorized($format, $e, $route->getUri());
 
 // User safe error message (usually invalid input, etc)
