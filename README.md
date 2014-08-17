@@ -12,3 +12,14 @@ Cohesion is more than just a Framework, it's a development guideline that tries 
 [Cohesion Core Package repository](https://github.com/cohesion/cohesion-core)
 
 
+## Installation
+
+```bash
+    composer create-project cohesion/cohesion-framework -sdev myproject
+    cd myproject
+    npm install
+    bower install
+    grunt less
+    grunt requirejs
+```
+

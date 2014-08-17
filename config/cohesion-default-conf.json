@@ -129,7 +129,8 @@
                     "root": "/assets",
                     "javascript": "/assets/js/",
                     "images": "/assets/images/",
-                    "style": "/assets/style/" // CSS
+                    "style": "/assets/build/style/",
+                    "libraries": "/assets/vendor/"
                 }
             },
             /**

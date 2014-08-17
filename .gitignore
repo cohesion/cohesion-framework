@@ -1,2 +1,5 @@
 /vendor/
 composer.lock
+/node_modules/
+/www/assets/vendor/
+/www/assets/build/

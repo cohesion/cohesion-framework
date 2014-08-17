@@ -3,6 +3,13 @@
     <head>
         <meta charset="utf-8" />
         <title>{{title}}</title>
+        <link rel="stylesheet" href="{{# asset_url}}{{asset_path.style}}main.css{{/ asset_url}}"/>
+        <script type="text/javascript" src="{{# asset_url}}{{asset_path.libraries}}requirejs/require.js{{/ asset_url}}"/></script>
+        {{> initJS}}
+        <script type="text/javascript" src="{{# asset_url}}{{asset_path.javascript}}main.js{{/ asset_url}}"></script>
+        <!--[if lt IE 9]>
+                <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
     </head>
     <body>
         {{> header}}

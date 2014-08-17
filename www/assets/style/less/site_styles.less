@@ -1,0 +1,112 @@
+main {
+    &:extend(.container);
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    font-weight: bold;
+}
+
+h1 {
+    font-size: 30px;
+}
+
+a {
+    cursor: pointer;
+}
+
+.clear {
+    .clearfix;
+}
+
+@input-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+input, select, textarea {
+    background-color: @input-bg;
+    color: @input-color;
+    padding: 6px 12px;
+    border: 1px solid @input-border;
+    border-radius: @input-border-radius;
+    line-height: normal;
+    box-shadow: @input-shadow;
+    .transition(~"border-color ease-in-out .15s, box-shadow ease-in-out .15s");
+
+    &:focus {
+        border-color: @input-border-focus;
+        outline: 0;
+        box-shadow: @input-shadow, 0 0 8px rgba(253, 129, 4, 0.6);
+    }
+
+    &[disabled], &[readonly], fieldset[disabled] & {
+        cursor: not-allowed;
+        background-color: @input-bg-disabled;
+        opacity: 1; // iOS fix for unreadable disabled content
+    }
+}
+
+input.with-append {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+input.with-prepend {
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}
+
+.prepend-input, .append-input {
+    padding: 4px 8px;
+    color: @input-color;
+    text-align: center;
+    background-color: @gray-lighter;
+    border: 1px solid @input-border;
+    border-radius: @input-border-radius;
+    white-space: nowrap;
+    vertical-align: middle;
+    display: inline-block;
+    margin-top: -2px;
+    height: 29px;
+}
+.append-input {
+    border-left: 0px;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+    margin-left: -4px;
+}
+.prepend-input {
+    border-right: 0;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+    margin-right: -4px;
+}
+
+button {
+    .btn;
+}
+
+#gradient-box {
+    background-color: #f7f7f7;
+    background-image: -webkit-linear-gradient(left, #ffffff 0%, #f6f6f6 10%, #f0f0f0 50%, #f6f6f6 90%, #ffffff 100%);
+    background-image: linear-gradient(to right, #ffffff 0%, #f6f6f6 10%, #f0f0f0 50%, #f6f6f6 90%, #ffffff 100%);
+    background-repeat: no-repeat;
+    &:before, &:after {
+        content: "";
+        height: 1px;
+        background-image: -webkit-linear-gradient(left, #ffffff 0%, #f6f6f6 5%, #d0d0d0 50%, #f6f6f6 95%, #ffffff 100%);
+        background-image: linear-gradient(to right, #ffffff 0%, #f6f6f6 5%, #d0d0d0 50%, #f6f6f6 95%, #ffffff 100%);
+        width: 100%;
+        display: block;
+    }
+    &:before {
+        margin-bottom: 10px;
+    }
+    &:after {
+        margin-top: 10px;
+    }
+}
+
+.btn-jumbo {
+    font-size: @font-size-h3;
+    padding: 15px 40px;
+    font-weight: bold;
+    margin: 20px 0;
+}
+

@@ -1,0 +1,13 @@
+{
+  "name": "cohesion",
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "bootstrap": "~3.2.0",
+    "requirejs": "~2.1.14",
+    "requirejs-text": "~2.0.12",
+    "mustache": "~0.8.2",
+    "requirejs-mustache": "*",
+    "less": "~1.7.4",
+    "font-awesome": "~4.1.0"
+  }
+}
