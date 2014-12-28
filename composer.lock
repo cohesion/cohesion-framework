@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/cohesion/cohesion-core.git",
-                "reference": "abba4e62bc41724c237b750d94f82b61e7c9ef0a"
+                "reference": "6f0ba6f04e0a149f9668fcded0245d9138f74abb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cohesion/cohesion-core/zipball/abba4e62bc41724c237b750d94f82b61e7c9ef0a",
-                "reference": "abba4e62bc41724c237b750d94f82b61e7c9ef0a",
+                "url": "https://api.github.com/repos/cohesion/cohesion-core/zipball/6f0ba6f04e0a149f9668fcded0245d9138f74abb",
+                "reference": "6f0ba6f04e0a149f9668fcded0245d9138f74abb",
                 "shasum": ""
             },
             "require": {
@@ -47,7 +47,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2014-12-28 08:57:13"
+            "time": "2014-12-28 10:13:03"
         },
         {
             "name": "mustache/mustache",

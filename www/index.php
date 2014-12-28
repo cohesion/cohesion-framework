@@ -2,12 +2,14 @@
 
 use \Cohesion\Environment\HTTPEnvironment;
 use \Cohesion\Structure\Factory\ServiceFactory;
+use \Cohesion\Structure\Factory\DataAccessFactory;
 use \Cohesion\Structure\Factory\RoutingFactory;
 use \Cohesion\Structure\Factory\ViewFactory;
 use \Cohesion\Auth\NoAuth;
 use \Cohesion\Auth\UnauthorizedException;
 use \Cohesion\Route\NotFoundException;
 use \Cohesion\Structure\UserSafeException;
+use \ErrorException;
 use \Exception;
 
 if (!isset($_SERVER) || !isset($_SERVER['DOCUMENT_ROOT'])) {
@@ -18,19 +20,21 @@ define('BASE_DIR', dirname($_SERVER['DOCUMENT_ROOT']) . '/');
 define('CONFIG_DIR', BASE_DIR . 'config/');
 
 function exceptionErrorHandler($errno, $errstr, $errfile, $errline ) {
-    throw new Exception($errstr, 0, $errno, $errfile, $errline);
+    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
 }
 set_error_handler("exceptionErrorHandler");
 
 require_once(BASE_DIR . 'vendor/autoload.php');
 
 $env = new HTTPEnvironment();
-$serviceFactory = new ServiceFactory($env->getConfig());
 $auth = new NoAuth();
 /* To use the authentication feature you must implement a UserService
 $auth = new HTTPAuth($serviceFactory->get('\\MyProject\\User\\UserService'));
 */
+$user = $auth->getUser();
 $env->setAuth($auth);
+$daoFactory = new DataAccessFactory($env->getConfig()->getConfig('data_access'));
+$serviceFactory = new ServiceFactory($daoFactory, $env->getConfig(), $user);
 $format = $env->getFormat();
 
 $route = RoutingFactory::getRoute();
@@ -51,7 +55,7 @@ $params = $route->getParameterValues();
 
 // Execute controller
 try {
-    $controller = new $class($env->getConfig(), $env->input(), $env->auth());
+    $controller = new $class($serviceFactory, $env->input(), $env->getConfig(), $env->auth(), $env);
     if ($params) {
         $output = call_user_func_array(array($controller, $function), $params);
     } else {
