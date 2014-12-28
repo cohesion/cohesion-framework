@@ -1,5 +1,15 @@
 <?php
 
+use \Cohesion\Environment\HTTPEnvironment;
+use \Cohesion\Structure\Factory\ServiceFactory;
+use \Cohesion\Structure\Factory\RoutingFactory;
+use \Cohesion\Structure\Factory\ViewFactory;
+use \Cohesion\Auth\NoAuth;
+use \Cohesion\Auth\UnauthorizedException;
+use \Cohesion\Route\NotFoundException;
+use \Cohesion\Structure\UserSafeException;
+use \Exception;
+
 if (!isset($_SERVER) || !isset($_SERVER['DOCUMENT_ROOT'])) {
     throw new Exception('DOCUMENT_ROOT must be defined in the server environment variables');
 }
@@ -8,19 +18,19 @@ define('BASE_DIR', dirname($_SERVER['DOCUMENT_ROOT']) . '/');
 define('CONFIG_DIR', BASE_DIR . 'config/');
 
 function exceptionErrorHandler($errno, $errstr, $errfile, $errline ) {
-    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+    throw new Exception($errstr, 0, $errno, $errfile, $errline);
 }
 set_error_handler("exceptionErrorHandler");
 
 require_once(BASE_DIR . 'vendor/autoload.php');
-require_once(BASE_DIR . 'vendor/cohesion/cohesion-core/src/Structure/exceptions.php');
-require_once(BASE_DIR . 'vendor/cohesion/cohesion-core/src/Util/Autoloader.php');
-
-use \Cohesion\Environment\HTTPEnvironment;
-use \Cohesion\Structure\Factory\RoutingFactory;
-use \Cohesion\Structure\Factory\ViewFactory;
 
 $env = new HTTPEnvironment();
+$serviceFactory = new ServiceFactory($env->getConfig());
+$auth = new NoAuth();
+/* To use the authentication feature you must implement a UserService
+$auth = new HTTPAuth($serviceFactory->get('\\MyProject\\User\\UserService'));
+*/
+$env->setAuth($auth);
 $format = $env->getFormat();
 
 $route = RoutingFactory::getRoute();
@@ -70,7 +80,7 @@ function notFound($format, $uri) {
         echo "Resource Not Found\nThere is no resource located at $uri\n";
     } else {
         if ($format == 'html') {
-            $view = ViewFactory::createView('NotFound');
+            $view = ViewFactory::createView('Error\\NotFound');
             $view->setResource($uri);
         } else {
             $view = ViewFactory::createDataView();
@@ -90,7 +100,7 @@ function unauthorized($format, $e, $uri) {
         echo $message . "\n";
     } else {
         if ($format == 'html') {
-            $view = ViewFactory::createView('Unauthorized');
+            $view = ViewFactory::createView('Error\\Unauthorized');
         } else {
             $view = ViewFactory::createDataView(null, $format);
         }
@@ -105,7 +115,7 @@ function userError($format, $e) {
         echo "Server Error\n" . $e->getMessage() . "\n";
     } else {
         if ($format == 'html') {
-            $view = ViewFactory::createView('BadRequest');
+            $view = ViewFactory::createView('Error\\BadRequest');
         } else {
             $view = ViewFactory::createDataView(null, $format);
         }
@@ -123,7 +133,7 @@ function serverError($format, $e, $production = false) {
         }
     } else {
         if ($format == 'html') {
-            $view = ViewFactory::createView('ServerError');
+            $view = ViewFactory::createView('Error\\ServerError');
         } else {
             $view = ViewFactory::createDataView();
             if ($production) {

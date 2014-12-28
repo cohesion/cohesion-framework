@@ -1,4 +1,5 @@
 <?php
+namespace MyProject\View;
 
 use \Cohesion\Structure\View\TemplateView;
 

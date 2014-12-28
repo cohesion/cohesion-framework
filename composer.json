@@ -5,7 +5,10 @@
     "keywords": ["framework"],
     "description": "The Cohesion PHP Framework distribution",
     "autoload": {
-        "psr-4": { "": "src/" }
+        "psr-4": {
+            "MyProject\\": "src/",
+            "MyProject\\View\\": "www/views/"
+        }
     },
     "require": {
         "php": ">=5.4.0",

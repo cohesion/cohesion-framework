@@ -1,4 +1,7 @@
 <?php
+namespace MyProject\View\Error;
+
+use MyProject\View\MyView;
 
 class UnauthorizedView extends MyView {
     public function __construct($template, $engine, $vars) {

@@ -1,4 +1,5 @@
 <?php
+namespace MyProject\View;
 
 class HomeView extends MyView {
     public function __construct($template, $engine, $vars) {

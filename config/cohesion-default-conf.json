@@ -22,10 +22,7 @@
      */
     "global": {
         "domain_name": "www.example.com",
-        "production": false,
-        "autoloader": {
-            "cache_key": "autoloader_cache"
-        }
+        "production": false
     },
 
     /**
@@ -80,6 +77,8 @@
             "prefix": "",
             "suffix": ""
         },
+        "directory": "/www/controllers",
+        "extension": "php",
         /**
          * Redirects can be used to send a redirect. Each of the keys within
          * the redirects configuration are used as regular expressions to be
@@ -103,7 +102,8 @@
         "class": {
             "default": "",
             "prefix": "",
-            "suffix": "View"
+            "suffix": "View",
+            "namespace": "\\Cohesion\\View\\"
         },
         /**
          * The default templating engine is CohesionMo which is basically an
